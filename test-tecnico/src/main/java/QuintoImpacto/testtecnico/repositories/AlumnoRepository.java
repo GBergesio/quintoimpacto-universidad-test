@@ -13,6 +13,7 @@ import java.util.Optional;
 @RepositoryRestResource
 public interface AlumnoRepository extends JpaRepository<Alumno, Long> {
     public Alumno findByDni(String dni);
+    public Alumno findByEmail(String email);
     public Optional<Alumno> findById(Long id);
     public List<Alumno> findAll();
     @Query("SELECT a FROM Alumno a JOIN a.cursos c WHERE c.nombre LIKE %:letra%")
