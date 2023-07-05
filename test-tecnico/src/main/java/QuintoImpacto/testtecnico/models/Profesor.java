@@ -28,7 +28,7 @@ public class Profesor {
     private String password;
     private Boolean deleted;
 
-//    @OneToMany(mappedBy = "profesor")
-//    private List<Curso> cursos;
+    @OneToMany(mappedBy = "profesor")
+    private List<Curso> cursos;
 
 }

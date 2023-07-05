@@ -1,7 +1,6 @@
 package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AdministradorDTO;
-import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.repositories.AdministradorRepository;

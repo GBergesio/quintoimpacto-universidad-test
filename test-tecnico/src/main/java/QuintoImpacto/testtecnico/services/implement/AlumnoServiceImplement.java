@@ -1,5 +1,8 @@
 package QuintoImpacto.testtecnico.services.implement;
 
+import QuintoImpacto.testtecnico.dtos.combinacion.AlumnoCursoDTO;
+import QuintoImpacto.testtecnico.models.Curso;
+import QuintoImpacto.testtecnico.repositories.CursoRepository;
 import QuintoImpacto.testtecnico.utils.MapperUtil;
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
@@ -20,10 +23,13 @@ public class AlumnoServiceImplement implements AlumnoService {
     @Autowired
     AlumnoRepository alumnoRepository;
 
+    @Autowired
+    CursoRepository cursoRepository;
+
     @Override
     public ResponseEntity<?> getAllAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
-        List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
+        List<AlumnoCursoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoCursoDTO.class);
         return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
 
@@ -109,6 +115,42 @@ public class AlumnoServiceImplement implements AlumnoService {
         alumnoRepository.save(alumno);
 
         return ResponseUtils.activeDesactiveResponse(!alumno.getDeleted());
+    }
+
+    @Override
+    public ResponseEntity<?> findAlumnosByLetraCurso(String letra) {
+        List<Alumno> alumnos = null;
+        alumnos = alumnoRepository.findByCursoNombreContainingLetra(letra);
+        List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
+        return ResponseUtils.dataResponse(alumnoDTOS, null);
+    }
+
+    @Override
+    public ResponseEntity<?> findByCurso(Long id) {
+        List<Alumno> alumnos = null;
+        Curso curso = cursoRepository.findById(id).orElse(null);
+
+        if (curso == null) {
+            return ResponseUtils.badRequestResponse("Curso no encontrado");
+        }
+
+        alumnos = alumnoRepository.findByCursos(curso);
+
+        List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
+        return ResponseUtils.dataResponse(alumnoDTOS, null);
+    }
+
+    @Override
+    public ResponseEntity<?> findByNombre(String nombre) {
+        List<Alumno> alumnos = null;
+
+        if (StringUtils.isBlank(nombre)) {
+            return ResponseUtils.badRequestResponse("Ingrese un nombre");
+        }
+        alumnos = alumnoRepository.findByNombre(nombre);
+
+        List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
+        return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
 
 }

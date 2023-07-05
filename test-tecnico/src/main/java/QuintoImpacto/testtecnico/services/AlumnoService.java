@@ -8,4 +8,8 @@ public interface AlumnoService {
     ResponseEntity<?> createAlumno(UserRequest alumnoRequest);
     ResponseEntity<?> updateAlumno(Long id, UserRequest alumnoRequest);
     ResponseEntity<?> deleteAlumno(Long id);
+    ResponseEntity<?> findAlumnosByLetraCurso(String letra);
+    ResponseEntity<?> findByCurso(Long id);
+    ResponseEntity<?> findByNombre(String nombre);
+
 }

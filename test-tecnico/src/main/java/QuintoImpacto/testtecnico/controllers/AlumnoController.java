@@ -32,4 +32,19 @@ public class AlumnoController {
     ResponseEntity<?> deleteAlumno(@PathVariable Long id) {
         return alumnoService.deleteAlumno(id);
     }
+
+    @GetMapping("/current/letra")
+    ResponseEntity<?> getAlumnosByLetra(@RequestParam String n) {
+        return alumnoService.findAlumnosByLetraCurso(n);
+    }
+
+    @GetMapping("/current/curso/{id}")
+    ResponseEntity<?> getAlumnosByCurso(@PathVariable Long id) {
+        return alumnoService.findByCurso(id);
+    }
+
+    @GetMapping("/current/nombre/{nombre}")
+    ResponseEntity<?> getAlumnosByCurso(@PathVariable String nombre) {
+        return alumnoService.findByNombre(nombre);
+    }
 }

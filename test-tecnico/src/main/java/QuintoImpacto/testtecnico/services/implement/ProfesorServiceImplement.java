@@ -1,6 +1,9 @@
 package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
+import QuintoImpacto.testtecnico.dtos.combinacion.ProfesorCursosDTO;
+import QuintoImpacto.testtecnico.models.Curso;
+import QuintoImpacto.testtecnico.repositories.CursoRepository;
 import QuintoImpacto.testtecnico.utils.MapperUtil;
 import QuintoImpacto.testtecnico.dtos.ProfesorDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
@@ -20,11 +23,13 @@ public class ProfesorServiceImplement implements ProfesorService {
 
     @Autowired
     ProfesorRepository profesorRepository;
+    @Autowired
+    CursoRepository cursoRepository;
 
     @Override
     public ResponseEntity<?> getAllProfesores() {
         List<Profesor> profesores = profesorRepository.findAll(); // Obtén la lista de profesores desde alguna fuente de datos
-        List<ProfesorDTO> profesorDTOS = MapperUtil.convertToDtoList(profesores, ProfesorDTO.class);
+        List<ProfesorCursosDTO> profesorDTOS = MapperUtil.convertToDtoList(profesores, ProfesorCursosDTO.class);
         return ResponseUtils.dataResponse(profesorDTOS, null);
     }
 
@@ -109,5 +114,41 @@ public class ProfesorServiceImplement implements ProfesorService {
         profesorRepository.save(profesor);
 
         return ResponseUtils.activeDesactiveResponse(!profesor.getDeleted());
+    }
+
+    @Override
+    public ResponseEntity<?> releaseCurso(Long idCurso) {
+        Curso curso = cursoRepository.findById(idCurso).orElse(null);
+        if (curso == null) {
+            return ResponseUtils.badRequestResponse("Profesor no encontrado");
+        }
+
+        if (curso.getProfesor() != null) {
+            curso.setProfesor(null);
+            cursoRepository.save(curso);
+        }
+
+        return ResponseUtils.okResponse("Listo");
+    }
+
+    @Override
+    public ResponseEntity<?> setCursoProfesor(Long idCurso, Long idProfesor) {
+        Curso curso = cursoRepository.findById(idCurso).orElse(null);
+        Profesor profesor = profesorRepository.findById(idProfesor).orElse(null);
+        if (curso == null) {
+            return ResponseUtils.badRequestResponse("Curso  no encontrado");
+        }
+        if (profesor == null) {
+            return ResponseUtils.badRequestResponse("Profesor no encontrado");
+        }
+
+        if (curso.getProfesor() != null){
+            return ResponseUtils.badRequestResponse("El Curso ya posee un profesor");
+        }
+
+        curso.setProfesor(profesor);
+        cursoRepository.save(curso);
+
+        return ResponseUtils.okResponse("Listo");
     }
 }

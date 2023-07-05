@@ -32,4 +32,14 @@ public class ProfesorController {
     ResponseEntity<?> deleteProfesor(@PathVariable Long id) {
         return profesorService.deleteProfesor(id);
     }
+
+    @PostMapping("/current/release")
+    ResponseEntity<?> newProfesor(@RequestParam Long idCurso) {
+        return profesorService.releaseCurso(idCurso);
+    }
+
+    @PostMapping("/current/setCursoProfesor")
+    ResponseEntity<?> setCursoProfesor(@RequestParam Long idCurso,@RequestParam Long idProfesor) {
+        return profesorService.setCursoProfesor(idCurso,idProfesor);
+    }
 }

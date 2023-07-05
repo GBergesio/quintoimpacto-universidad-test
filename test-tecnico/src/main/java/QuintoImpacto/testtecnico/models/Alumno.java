@@ -6,7 +6,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "alumnos")
@@ -28,12 +31,7 @@ public class Alumno {
     private String password;
     private Boolean deleted;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "alumno_curso",
-//            joinColumns = @JoinColumn(name = "alumno_id"),
-//            inverseJoinColumns = @JoinColumn(name = "curso_id")
-//    )
-//    private List<Curso> cursos;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "alumnos")
+    private List<Curso> cursos;
 
 }
