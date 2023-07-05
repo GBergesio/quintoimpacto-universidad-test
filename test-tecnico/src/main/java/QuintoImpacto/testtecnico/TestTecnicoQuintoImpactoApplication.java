@@ -1,7 +1,9 @@
 package QuintoImpacto.testtecnico;
 
 import QuintoImpacto.testtecnico.models.Alumno;
+import QuintoImpacto.testtecnico.models.Profesor;
 import QuintoImpacto.testtecnico.repositories.AlumnoRepository;
+import QuintoImpacto.testtecnico.repositories.ProfesorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +17,7 @@ public class TestTecnicoQuintoImpactoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner initData(AlumnoRepository alumnoRepository){
+	public CommandLineRunner initData(AlumnoRepository alumnoRepository, ProfesorRepository profesorRepository){
 		return (args) -> {
 			Alumno alumno1 = new Alumno();
 			alumno1.setApellido("Perez");
@@ -37,6 +39,27 @@ public class TestTecnicoQuintoImpactoApplication {
 
 			alumnoRepository.save(alumno1);
 			alumnoRepository.save(alumno2);
+
+			Profesor profesor1 = new Profesor();
+			profesor1.setApellido("Profesor");
+			profesor1.setNombre("Jirafales");
+			profesor1.setDni("123abc");
+			profesor1.setEmail("profe_jirafales@gmail.com");
+			profesor1.setCelular("12333");
+			profesor1.setPassword("12345");
+			profesor1.setDeleted(false);
+
+			Profesor profesor2= new Profesor();
+			profesor2.setApellido("Profe");
+			profesor2.setNombre("Sor");
+			profesor2.setDni("2a33");
+			profesor2.setEmail("profe_sor@gmail.com");
+			profesor2.setCelular("35824");
+			profesor2.setPassword("12323");
+			profesor2.setDeleted(false);
+
+			profesorRepository.save(profesor1);
+			profesorRepository.save(profesor2);
 		};
 	}
 

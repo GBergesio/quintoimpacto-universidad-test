@@ -1,19 +1,17 @@
 package QuintoImpacto.testtecnico.models;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "alumnos")
+@Table(name = "administradores")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Alumno {
+public class Administrador {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -27,13 +25,4 @@ public class Alumno {
     private String email;
     private String password;
     private Boolean deleted;
-
-//    @ManyToMany
-//    @JoinTable(
-//            name = "alumno_curso",
-//            joinColumns = @JoinColumn(name = "alumno_id"),
-//            inverseJoinColumns = @JoinColumn(name = "curso_id")
-//    )
-//    private List<Curso> cursos;
-
 }
