@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface AdministradorRepository extends JpaRepository<Administrador, Long> {
 
     public Administrador findByDni(String dni);
+    public Administrador findByEmail(String email);
     public Optional<Administrador> findById(Long id);
     public List<Administrador> findAll();
 }

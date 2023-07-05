@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface ProfesorRepository extends JpaRepository<Profesor, Long> {
 
     public Profesor findByDni(String dni);
+    public Profesor findByEmail(String email);
     public Optional<Profesor> findById(Long id);
     public List<Profesor> findAll();
 }
