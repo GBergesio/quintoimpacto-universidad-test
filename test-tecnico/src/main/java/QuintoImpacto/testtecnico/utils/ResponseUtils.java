@@ -22,6 +22,10 @@ public class ResponseUtils {
         return createResponse(null, message, HttpStatus.OK);
     }
 
+    public static <T> ResponseEntity<CustomResponse<T>> loginResponse(T object) {
+        return createResponse(object,"Inicio de sesión exitoso", HttpStatus.OK);
+    }
+
     public static <T> ResponseEntity<CustomResponse<T>> dataResponse(T object, String message) {
         return createResponse(object, (message == null ? MessageRepository.getDataLoadedSuccessfullyMessage() : message), HttpStatus.OK);
     }

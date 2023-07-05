@@ -1,8 +1,11 @@
 package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.combinacion.AlumnoCursoDTO;
+import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.models.Curso;
+import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
 import QuintoImpacto.testtecnico.repositories.CursoRepository;
+import QuintoImpacto.testtecnico.repositories.ProfesorRepository;
 import QuintoImpacto.testtecnico.utils.MapperUtil;
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
@@ -10,9 +13,11 @@ import QuintoImpacto.testtecnico.models.Alumno;
 import QuintoImpacto.testtecnico.repositories.AlumnoRepository;
 import QuintoImpacto.testtecnico.services.AlumnoService;
 import QuintoImpacto.testtecnico.utils.ResponseUtils;
+import QuintoImpacto.testtecnico.utils.UserUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +27,21 @@ public class AlumnoServiceImplement implements AlumnoService {
 
     @Autowired
     AlumnoRepository alumnoRepository;
-
+    @Autowired
+    AdministradorRepository administradorRepository;
+    @Autowired
+    ProfesorRepository profesorRepository;
     @Autowired
     CursoRepository cursoRepository;
+
+    @Override
+    public Boolean loggedUser(Authentication authentication) {
+        Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
+        if (loggedUser instanceof Administrador) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public ResponseEntity<?> getAllAlumnos() {
@@ -34,10 +51,13 @@ public class AlumnoServiceImplement implements AlumnoService {
     }
 
     @Override
-    public ResponseEntity<?> createAlumno(UserRequest alumnoRequest) {
-        List<Alumno> alumnos;
+    public ResponseEntity<?> createAlumno(UserRequest alumnoRequest,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
 
-        alumnos = alumnoRepository.findAll();
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
+        List<Alumno> alumnos = alumnoRepository.findAll();
 
         Boolean alumnosExist = alumnos.stream().anyMatch(a -> a.getDni().equals(alumnoRequest.getDni()));
 
@@ -70,7 +90,11 @@ public class AlumnoServiceImplement implements AlumnoService {
     }
 
     @Override
-    public ResponseEntity<?> updateAlumno(Long id,UserRequest alumnoRequest) {
+    public ResponseEntity<?> updateAlumno(Long id,UserRequest alumnoRequest,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Alumno alumno = alumnoRepository.findById(id).orElse(null);
         if (alumno == null) {
             return ResponseUtils.badRequestResponse("Alumno no encontrado");
@@ -106,7 +130,11 @@ public class AlumnoServiceImplement implements AlumnoService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAlumno(Long id) {
+    public ResponseEntity<?> deleteAlumno(Long id,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Alumno alumno = alumnoRepository.findById(id).orElse(null);
         if (alumno == null) {
             return ResponseUtils.badRequestResponse("Alumno no encontrado");
@@ -152,5 +180,6 @@ public class AlumnoServiceImplement implements AlumnoService {
         List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
         return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
+
 
 }

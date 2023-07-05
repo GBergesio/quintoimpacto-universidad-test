@@ -1,15 +1,20 @@
 package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AdministradorDTO;
+import QuintoImpacto.testtecnico.dtos.LoggedUserDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
+import QuintoImpacto.testtecnico.repositories.AlumnoRepository;
+import QuintoImpacto.testtecnico.repositories.ProfesorRepository;
 import QuintoImpacto.testtecnico.services.AdministradorService;
 import QuintoImpacto.testtecnico.utils.MapperUtil;
 import QuintoImpacto.testtecnico.utils.ResponseUtils;
+import QuintoImpacto.testtecnico.utils.UserUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,16 +23,51 @@ import java.util.List;
 public class AdministradorServiceImplement implements AdministradorService {
     @Autowired
     AdministradorRepository administradorRepository;
+    @Autowired
+    ProfesorRepository profesorRepository;
+    @Autowired
+    AlumnoRepository alumnoRepository;
 
     @Override
-    public ResponseEntity<?> getAllAdmin() {
-        List<Administrador> administradores = administradorRepository.findAll();
-        List<AdministradorDTO> AdministradorDTOS = MapperUtil.convertToDtoList(administradores, AdministradorDTO.class);
-        return ResponseUtils.dataResponse(AdministradorDTOS, null);
+    public Boolean isAdmin(Authentication authentication) {
+        Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
+        if (loggedUser instanceof Administrador) {
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public ResponseEntity<?> createAdmin(UserRequest adminRequest) {
+    public ResponseEntity<?> loggedUser(Authentication authentication) {
+        Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
+        if(loggedUser == null){
+            return ResponseUtils.forbiddenResponse();
+        } else{
+            LoggedUserDTO loggedUserr = MapperUtil.convertToDto(loggedUser, LoggedUserDTO.class);
+            return ResponseUtils.dataResponse(loggedUserr,null);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getAllAdmin(Authentication authentication) {
+        Boolean isAdminActive = isAdmin(authentication);
+
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
+
+        List<Administrador> administradores = administradorRepository.findAll();
+        List<AdministradorDTO> administradorDTOS = MapperUtil.convertToDtoList(administradores, AdministradorDTO.class);
+        return ResponseUtils.dataResponse(administradorDTOS, null);
+    }
+
+    @Override
+    public ResponseEntity<?> createAdmin(UserRequest adminRequest,Authentication authentication) {
+        Boolean isAdminActive = isAdmin(authentication);
+
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         List<Administrador> administradores;
 
         administradores = administradorRepository.findAll();
@@ -63,7 +103,12 @@ public class AdministradorServiceImplement implements AdministradorService {
     }
 
     @Override
-    public ResponseEntity<?> updateAdmin(Long id, UserRequest adminRequest) {
+    public ResponseEntity<?> updateAdmin(Long id, UserRequest adminRequest,Authentication authentication) {
+        Boolean isAdminActive = isAdmin(authentication);
+
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Administrador administrador = administradorRepository.findById(id).orElse(null);
         if (administrador == null) {
             return ResponseUtils.badRequestResponse("Administrador no encontrado");
@@ -99,7 +144,12 @@ public class AdministradorServiceImplement implements AdministradorService {
     }
 
     @Override
-    public ResponseEntity<?> deleteAdmin(Long id) {
+    public ResponseEntity<?> deleteAdmin(Long id, Authentication authentication) {
+        Boolean isAdminActive = isAdmin(authentication);
+
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Administrador administrador = administradorRepository.findById(id).orElse(null);
         if (administrador == null) {
             return ResponseUtils.badRequestResponse("Administrador no encontrado");
@@ -109,4 +159,5 @@ public class AdministradorServiceImplement implements AdministradorService {
 
         return ResponseUtils.activeDesactiveResponse(!administrador.getDeleted());
     }
+
 }

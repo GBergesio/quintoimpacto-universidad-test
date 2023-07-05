@@ -1,5 +1,6 @@
 package QuintoImpacto.testtecnico.controllers.login;
 
+import QuintoImpacto.testtecnico.services.AdministradorService;
 import QuintoImpacto.testtecnico.services.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +21,20 @@ public class CurrentAuth {
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
-    @Transactional
+    @Autowired
+    private AdministradorService administradorService;
+
     @GetMapping()
+    ResponseEntity<?> loggedUser(Authentication authentication) {
+        return administradorService.loggedUser(authentication);
+    }
+
+    @Transactional
+    @GetMapping("/credentials")
     ResponseEntity<?> currentUser(Authentication authentication) {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
+
         return new ResponseEntity<>(userDetails, HttpStatus.OK);
     }
 

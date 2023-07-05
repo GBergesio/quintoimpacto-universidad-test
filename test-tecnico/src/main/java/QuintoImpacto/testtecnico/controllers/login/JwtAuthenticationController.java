@@ -4,6 +4,7 @@ import QuintoImpacto.testtecnico.dtos.security.JwtRequest;
 import QuintoImpacto.testtecnico.dtos.security.JwtResponse;
 import QuintoImpacto.testtecnico.security.JwtTokenUtil;
 import QuintoImpacto.testtecnico.services.JwtUserDetailsService;
+import QuintoImpacto.testtecnico.utils.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +20,6 @@ public class JwtAuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -35,13 +35,8 @@ public class JwtAuthenticationController {
 
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseUtils.loginResponse(new JwtResponse(token));
     }
-
-//    @RequestMapping(value = "/register", method = RequestMethod.POST)
-//    public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
-//        return ResponseEntity.ok(userDetailsService.save(user));
-//    }
 
     private void authenticate(String username, String password) throws Exception {
         try {

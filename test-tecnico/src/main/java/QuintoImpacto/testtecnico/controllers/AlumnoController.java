@@ -4,6 +4,7 @@ import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.services.AlumnoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,18 +20,18 @@ public class AlumnoController {
     }
 
     @PostMapping("/current")
-    ResponseEntity<?> newAlumno(@RequestBody UserRequest alumnoRequest) {
-        return alumnoService.createAlumno(alumnoRequest);
+    ResponseEntity<?> newAlumno(@RequestBody UserRequest alumnoRequest, Authentication authentication) {
+        return alumnoService.createAlumno(alumnoRequest,authentication);
     }
 
     @PatchMapping("/current/id/{id}")
-    ResponseEntity<?> updateAlumno(@PathVariable Long id,@RequestBody UserRequest alumnoRequest) {
-        return alumnoService.updateAlumno(id, alumnoRequest);
+    ResponseEntity<?> updateAlumno(@PathVariable Long id,@RequestBody UserRequest alumnoRequest,Authentication authentication) {
+        return alumnoService.updateAlumno(id, alumnoRequest,authentication);
     }
 
     @DeleteMapping("/current/id/{id}")
-    ResponseEntity<?> deleteAlumno(@PathVariable Long id) {
-        return alumnoService.deleteAlumno(id);
+    ResponseEntity<?> deleteAlumno(@PathVariable Long id, Authentication authentication) {
+        return alumnoService.deleteAlumno(id,authentication);
     }
 
     @GetMapping("/current/letra")

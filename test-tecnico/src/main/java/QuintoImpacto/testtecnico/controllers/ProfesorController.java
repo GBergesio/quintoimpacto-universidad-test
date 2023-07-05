@@ -4,6 +4,7 @@ import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.services.ProfesorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,27 +20,27 @@ public class ProfesorController {
     }
 
     @PostMapping("/current")
-    ResponseEntity<?> newProfesor(@RequestBody UserRequest profesorRequest) {
-        return profesorService.createProfesor(profesorRequest);
+    ResponseEntity<?> newProfesor(@RequestBody UserRequest profesorRequest,Authentication authentication) {
+        return profesorService.createProfesor(profesorRequest,authentication);
     }
 
     @PatchMapping("/current/id/{id}")
-    ResponseEntity<?> updateProfesor(@PathVariable Long id,@RequestBody UserRequest profesorRequest) {
-        return profesorService.updateProfesor(id, profesorRequest);
+    ResponseEntity<?> updateProfesor(@PathVariable Long id,@RequestBody UserRequest profesorRequest,Authentication authentication) {
+        return profesorService.updateProfesor(id, profesorRequest,authentication);
     }
 
     @DeleteMapping("/current/id/{id}")
-    ResponseEntity<?> deleteProfesor(@PathVariable Long id) {
-        return profesorService.deleteProfesor(id);
+    ResponseEntity<?> deleteProfesor(@PathVariable Long id,Authentication authentication) {
+        return profesorService.deleteProfesor(id,authentication);
     }
 
     @PostMapping("/current/release")
-    ResponseEntity<?> newProfesor(@RequestParam Long idCurso) {
-        return profesorService.releaseCurso(idCurso);
+    ResponseEntity<?> newProfesor(@RequestParam Long idCurso, Authentication authentication) {
+        return profesorService.releaseCurso(idCurso,authentication);
     }
 
     @PostMapping("/current/setCursoProfesor")
-    ResponseEntity<?> setCursoProfesor(@RequestParam Long idCurso,@RequestParam Long idProfesor) {
-        return profesorService.setCursoProfesor(idCurso,idProfesor);
+    ResponseEntity<?> setCursoProfesor(@RequestParam Long idCurso,@RequestParam Long idProfesor,Authentication authentication) {
+        return profesorService.setCursoProfesor(idCurso,idProfesor,authentication);
     }
 }

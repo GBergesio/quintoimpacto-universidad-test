@@ -2,7 +2,10 @@ package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
 import QuintoImpacto.testtecnico.dtos.combinacion.ProfesorCursosDTO;
+import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.models.Curso;
+import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
+import QuintoImpacto.testtecnico.repositories.AlumnoRepository;
 import QuintoImpacto.testtecnico.repositories.CursoRepository;
 import QuintoImpacto.testtecnico.utils.MapperUtil;
 import QuintoImpacto.testtecnico.dtos.ProfesorDTO;
@@ -11,9 +14,11 @@ import QuintoImpacto.testtecnico.models.Profesor;
 import QuintoImpacto.testtecnico.repositories.ProfesorRepository;
 import QuintoImpacto.testtecnico.services.ProfesorService;
 import QuintoImpacto.testtecnico.utils.ResponseUtils;
+import QuintoImpacto.testtecnico.utils.UserUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +29,20 @@ public class ProfesorServiceImplement implements ProfesorService {
     @Autowired
     ProfesorRepository profesorRepository;
     @Autowired
+    AdministradorRepository administradorRepository;
+    @Autowired
+    AlumnoRepository alumnoRepository;
+    @Autowired
     CursoRepository cursoRepository;
+
+    @Override
+    public Boolean loggedUser(Authentication authentication) {
+        Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
+        if (loggedUser instanceof Administrador) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public ResponseEntity<?> getAllProfesores() {
@@ -34,7 +52,12 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
-    public ResponseEntity<?> createProfesor(UserRequest profesorRequest) {
+    public ResponseEntity<?> createProfesor(UserRequest profesorRequest,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
+
         List<Profesor> profesores;
 
         profesores = profesorRepository.findAll();
@@ -69,7 +92,11 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
-    public ResponseEntity<?> updateProfesor(Long id, UserRequest profesorRequest) {
+    public ResponseEntity<?> updateProfesor(Long id, UserRequest profesorRequest,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
 
         Profesor profesor = profesorRepository.findById(id).orElse(null);
         if (profesor == null) {
@@ -105,7 +132,11 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
-    public ResponseEntity<?> deleteProfesor(Long id) {
+    public ResponseEntity<?> deleteProfesor(Long id,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Profesor profesor = profesorRepository.findById(id).orElse(null);
         if (profesor == null) {
             return ResponseUtils.badRequestResponse("Profesor no encontrado");
@@ -117,10 +148,14 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
-    public ResponseEntity<?> releaseCurso(Long idCurso) {
+    public ResponseEntity<?> releaseCurso(Long idCurso,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Curso curso = cursoRepository.findById(idCurso).orElse(null);
         if (curso == null) {
-            return ResponseUtils.badRequestResponse("Profesor no encontrado");
+            return ResponseUtils.badRequestResponse("Curso no encontrado");
         }
 
         if (curso.getProfesor() != null) {
@@ -128,11 +163,15 @@ public class ProfesorServiceImplement implements ProfesorService {
             cursoRepository.save(curso);
         }
 
-        return ResponseUtils.okResponse("Listo");
+        return ResponseUtils.updatedResponse(null);
     }
 
     @Override
-    public ResponseEntity<?> setCursoProfesor(Long idCurso, Long idProfesor) {
+    public ResponseEntity<?> setCursoProfesor(Long idCurso, Long idProfesor,Authentication authentication) {
+        Boolean isAdminActive = loggedUser(authentication);
+        if (!isAdminActive){
+            return ResponseUtils.forbiddenResponse();
+        }
         Curso curso = cursoRepository.findById(idCurso).orElse(null);
         Profesor profesor = profesorRepository.findById(idProfesor).orElse(null);
         if (curso == null) {
@@ -149,6 +188,6 @@ public class ProfesorServiceImplement implements ProfesorService {
         curso.setProfesor(profesor);
         cursoRepository.save(curso);
 
-        return ResponseUtils.okResponse("Listo");
+        return ResponseUtils.updatedResponse(null);
     }
 }
