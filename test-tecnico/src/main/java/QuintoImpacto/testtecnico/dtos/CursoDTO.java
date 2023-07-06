@@ -12,4 +12,5 @@ public class CursoDTO {
     private Long id;
     private String nombre;
     private Turno turno;
+    private Boolean deleted;
 }
