@@ -12,7 +12,7 @@ const config = {
     "Access-Control-Allow-methods": "*",
   },
 };
-const createData = async (
+const patchData = async (
   params,
   servlet,
   handleClose,
@@ -20,7 +20,7 @@ const createData = async (
   resetForm
 ) => {
   const res = await axios
-    .post(`${apiUrl}${servlet}`, params, config)
+    .patch(`${apiUrl}${servlet}`, params, config)
     .then((res) => {
       handleClose();
       handleOpenSnackBar(res.data.message, "success");
@@ -35,4 +35,4 @@ const createData = async (
     });
 };
 
-export default createData;
+export default patchData;

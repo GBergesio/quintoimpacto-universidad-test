@@ -12,4 +12,5 @@ public class CursoRequest {
     private String nombre;
     private Turno turno;
     private Long idProfesor;
+    private Boolean deleted;
 }

@@ -23,9 +23,22 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import getData from "@/utils/axiosGet";
 import { checkTypeUser, cleanToken } from "@/utils/security";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import deleteData from "@/utils/axiosDelete";
 import UtilSnackBar from "../Snackbar";
+import SimpleDialog from "../Dialog/SimpleDialog";
+import CursoForm from "../Forms/CursoForm";
+import EstadoSelect from "../Forms/EstadoSelect";
 // import { mainListItems, secondaryListItems } from './listItems';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
@@ -100,12 +113,17 @@ const defaultTheme = createTheme();
 export default function Dashboard() {
   //USE STATE
   const [open, setOpen] = useState(true);
-  const [data, setData] = useState([]);
+  const [dataCursos, setDataCursos] = useState([]);
+  const [cursoSelected, setCursoSelected] = useState([]);
   const [dataProfesores, setProfesoresData] = useState([]);
   const [userLogged, setUserLogged] = useState([]);
   const [bodySnack, setBodySnack] = useState("");
   const [severity, setSeverity] = useState("");
   const [openSnack, setOpenSnack] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [body, setBody] = useState("create");
+  const [openCursoForm, setOpenCursoForm] = useState(false);
+  const [filterValue, setFilterValue] = useState("todos");
 
   let userType = checkTypeUser(userLogged);
   const router = useRouter();
@@ -124,8 +142,23 @@ export default function Dashboard() {
     setOpenSnack(false);
   };
 
+  const handleOpenCursoForm = (body) => {
+    setOpenCursoForm(true);
+    setBody(body);
+  };
+
+  const handleCloseCursoForm = () => {
+    setOpenCursoForm(false);
+    setBody("create");
+    setCursoSelected([]);
+  };
+
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilterValue(event.target.value);
   };
 
   const goTo = (site) => {
@@ -144,13 +177,13 @@ export default function Dashboard() {
   };
 
   async function releaseProfesor(id) {
-    await deleteData("/profesores/current/release/" + id,handleOpenSnackBar);
-    refreshData("/cursos/current", setData);
+    await deleteData("/profesores/current/release/" + id, handleOpenSnackBar);
+    refreshData("/cursos/current", setDataCursos);
   }
 
   //USE EFFECT
   useEffect(() => {
-    refreshData("/cursos/current", setData);
+    refreshData("/cursos/current", setDataCursos);
     refreshData("/currentUser", setUserLogged);
     refreshData("/profesores/current", setProfesoresData);
   }, []);
@@ -162,7 +195,7 @@ export default function Dashboard() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: "24px", // keep right padding when drawer closed
+              pr: "24px",
             }}
           >
             <IconButton
@@ -231,37 +264,98 @@ export default function Dashboard() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* cursos - foreach */}
-              {data.map((item, index) => (
-                <Grid item key={index} xs={12} md={8} lg={3}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      height: 280,
+            <Grid
+              container
+              alignItems="center"
+              spacing={2}
+              sx={{ mt: 4, mb: 4 }}
+            >
+              <Grid item xs={12} sm={6}>
+                <Input
+                  fullWidth
+                  placeholder="Buscar curso"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+              </Grid>
+              {userType !== "alumno" && (
+                <Grid item xs={12} sm={4}>
+                  <EstadoSelect
+                    filterValue={filterValue}
+                    handleFilterChange={handleFilterChange}
+                  />
+                </Grid>
+              )}
+              {userType === "administrador" && (
+                <Grid item xs={12} sm={2}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => {
+                      handleOpenCursoForm("create");
                     }}
                   >
-                    <Curso
-                      d={item}
-                      userType={userType}
-                      userLogged={userLogged}
-                      releaseProfesor={releaseProfesor}
-                      dataProfesores={dataProfesores}
-                      refreshData={refreshData}
-                      setData={setData}
-                      handleOpenSnackBar={handleOpenSnackBar}
-                    />
+                    Agregar curso
+                  </Button>
+                </Grid>
+              )}
+            </Grid>
+            <Grid container spacing={3}>
+              {dataCursos
+                .filter((item) =>
+                  item.curso.nombre
+                    ?.toLowerCase()
+                    .includes(searchValue.toLowerCase())
+                )
+                .filter((item) =>
+                  userType === "alumno" ? !item.curso.deleted : true
+                )
+                .map((item, index) => (
+                  <Grid item key={index} xs={12} md={8} lg={3}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        height: 280,
+                      }}
+                    >
+                      <Curso
+                        d={item}
+                        userType={userType}
+                        userLogged={userLogged}
+                        releaseProfesor={releaseProfesor}
+                        dataProfesores={dataProfesores}
+                        refreshData={refreshData}
+                        setData={setDataCursos}
+                        handleOpenSnackBar={handleOpenSnackBar}
+                        setCursoSelected={setCursoSelected}
+                        handleOpenCursoForm={handleOpenCursoForm}
+                        setBody={setBody}
+                      />
+                    </Paper>
+                  </Grid>
+                ))}
+              {dataCursos.filter((item) =>
+                item.curso.nombre
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase())
+              ).length === 0 && (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <Typography variant="body1">
+                      No se encontraron cursos disponibles.
+                    </Typography>
                   </Paper>
                 </Grid>
-              ))}
-
-              <Grid item xs={12}>
+              )}
+              {/* <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                   abajo
                 </Paper>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
@@ -271,6 +365,22 @@ export default function Dashboard() {
           handleCloseSnackBar={handleCloseSnackBar}
           severity={severity}
           body={bodySnack}
+        />
+        <SimpleDialog
+          open={openCursoForm}
+          close={handleCloseCursoForm}
+          titulo={body === "create" ? "Crear curso" : "Editar curso"}
+          form={
+            <CursoForm
+              cSelected={cursoSelected}
+              dataProfesores={dataProfesores}
+              refreshData={refreshData}
+              handleOpenSnackBar={handleOpenSnackBar}
+              handleClose={handleCloseCursoForm}
+              setData={setDataCursos}
+              body={body}
+            />
+          }
         />
       </Box>
     </ThemeProvider>

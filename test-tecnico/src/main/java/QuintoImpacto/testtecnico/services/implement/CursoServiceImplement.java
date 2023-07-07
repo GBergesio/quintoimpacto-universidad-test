@@ -59,7 +59,7 @@ public class CursoServiceImplement implements CursoService {
         }
 
         List<Curso> cursos = cursoRepository.findAll();
-        Boolean cursoExist = cursos.stream().anyMatch(c -> c.getNombre().equals(cursoRequest.getNombre()));
+        Boolean cursoExist = cursos.stream().anyMatch(c -> c.getNombre().toUpperCase().equals(cursoRequest.getNombre().toUpperCase()));
 
         if (StringUtils.isBlank(cursoRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre del curso requerido");
@@ -78,6 +78,7 @@ public class CursoServiceImplement implements CursoService {
             }
             newCurso.setProfesor(profesor);
         }
+        newCurso.setDeleted(cursoRequest.getDeleted());
         cursoRepository.save(newCurso);
 
         CursoDTO newCursoDTO = MapperUtil.convertToDto(newCurso, CursoDTO.class);
@@ -116,7 +117,7 @@ public class CursoServiceImplement implements CursoService {
         }
         curso.setNombre(cursoRequest.getNombre());
         curso.setTurno(cursoRequest.getTurno());
-
+        curso.setDeleted(cursoRequest.getDeleted());
         cursoRepository.save(curso);
 
         CursoProfesorAlumnosDTO cursoDTO = MapperUtil.convertToDto(curso, CursoProfesorAlumnosDTO.class);
