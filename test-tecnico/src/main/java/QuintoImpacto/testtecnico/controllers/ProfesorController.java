@@ -1,5 +1,6 @@
 package QuintoImpacto.testtecnico.controllers;
 
+import QuintoImpacto.testtecnico.dtos.request.CursoProfesorRequest;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.services.ProfesorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,13 @@ public class ProfesorController {
         return profesorService.deleteProfesor(id,authentication);
     }
 
-    @PostMapping("/current/release")
-    ResponseEntity<?> newProfesor(@RequestParam Long idCurso, Authentication authentication) {
+    @DeleteMapping("/current/release/{idCurso}")
+    ResponseEntity<?> newProfesor(@PathVariable Long idCurso, Authentication authentication) {
         return profesorService.releaseCurso(idCurso,authentication);
     }
 
     @PostMapping("/current/setCursoProfesor")
-    ResponseEntity<?> setCursoProfesor(@RequestParam Long idCurso,@RequestParam Long idProfesor,Authentication authentication) {
-        return profesorService.setCursoProfesor(idCurso,idProfesor,authentication);
+    ResponseEntity<?> setCursoProfesor(@RequestBody CursoProfesorRequest cursoProfesorRequest, Authentication authentication) {
+        return profesorService.setCursoProfesor(cursoProfesorRequest,authentication);
     }
 }

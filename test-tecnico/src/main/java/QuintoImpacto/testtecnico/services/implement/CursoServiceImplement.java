@@ -141,10 +141,10 @@ public class CursoServiceImplement implements CursoService {
     }
         @Override
     public ResponseEntity<?> setCursoAlumno(CursoAlumnoRequest request, Authentication authentication) {
-        Boolean isAdminActive = isAdmin(authentication);
-        if (!isAdminActive){
-            return ResponseUtils.forbiddenResponse();
-        }
+//        Boolean isAdminActive = isAdmin(authentication);
+//        if (!isAdminActive){
+//            return ResponseUtils.forbiddenResponse();
+//        }
         Curso curso = cursoRepository.findById(request.getIdCurso()).orElse(null);
         if(curso == null){
             return ResponseUtils.badRequestResponse("No se encontró el curso");

@@ -2,6 +2,7 @@ package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
 import QuintoImpacto.testtecnico.dtos.combinacion.ProfesorCursosDTO;
+import QuintoImpacto.testtecnico.dtos.request.CursoProfesorRequest;
 import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.models.Curso;
 import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
@@ -167,13 +168,13 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
-    public ResponseEntity<?> setCursoProfesor(Long idCurso, Long idProfesor,Authentication authentication) {
+    public ResponseEntity<?> setCursoProfesor(CursoProfesorRequest cursoProfesorRequest, Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
         if (!isAdminActive){
             return ResponseUtils.forbiddenResponse();
         }
-        Curso curso = cursoRepository.findById(idCurso).orElse(null);
-        Profesor profesor = profesorRepository.findById(idProfesor).orElse(null);
+        Curso curso = cursoRepository.findById(cursoProfesorRequest.getIdCurso()).orElse(null);
+        Profesor profesor = profesorRepository.findById(cursoProfesorRequest.getIdProfesor()).orElse(null);
         if (curso == null) {
             return ResponseUtils.badRequestResponse("Curso  no encontrado");
         }

@@ -25,4 +25,7 @@ public class Administrador {
     private String email;
     private String password;
     private Boolean deleted;
+
+    @Column(name = "tipo_usuario", columnDefinition = "VARCHAR(255) DEFAULT 'administrador'")
+    private String tipo;
 }

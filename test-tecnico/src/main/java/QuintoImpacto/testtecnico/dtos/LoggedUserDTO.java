@@ -14,4 +14,5 @@ public class LoggedUserDTO {
     private String apellido;
     private String celular;
     private String email;
+    private String tipo;
 }

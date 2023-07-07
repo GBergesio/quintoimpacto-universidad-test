@@ -31,6 +31,9 @@ public class Alumno {
     private String password;
     private Boolean deleted;
 
+    @Column(name = "tipo_usuario", columnDefinition = "VARCHAR(255) DEFAULT 'alumno'")
+    private String tipo;
+
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "alumnos")
     private List<Curso> cursos;
 

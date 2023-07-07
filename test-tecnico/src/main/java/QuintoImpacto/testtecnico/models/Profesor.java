@@ -28,6 +28,9 @@ public class Profesor {
     private String password;
     private Boolean deleted;
 
+    @Column(name = "tipo_usuario", columnDefinition = "VARCHAR(255) DEFAULT 'profesor'")
+    private String tipo;
+
     @OneToMany(mappedBy = "profesor")
     private List<Curso> cursos;
 
