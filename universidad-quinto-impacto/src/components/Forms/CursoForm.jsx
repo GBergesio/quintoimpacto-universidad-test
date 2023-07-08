@@ -126,10 +126,16 @@ export default function CursoForm({
               fullWidth
               size="large"
               variant="contained"
-              sx={{ marginBottom: 7, marginTop: 3 }}
+              sx={{
+                marginBottom: 7,
+                marginTop: 3,
+                backgroundColor: "#4caf44",
+                "&:hover": {
+                  backgroundColor: "#50ad48",
+                },
+              }}
               onClick={handleSubmit}
               disabled={values.turno === "" || isSubmitting}
-              color="success"
             >
               {body === "create" ? "Crear" : "Editar"}
             </Button>
@@ -139,9 +145,14 @@ export default function CursoForm({
                 handleClose();
               }}
               variant="contained"
-              color="error"
+              sx={{
+                backgroundColor: "#de0734",
+                "&:hover": {
+                  backgroundColor: "#d82c59",
+                },
+              }}
             >
-              Salirrr
+              Salir
             </Button>
           </Box>
         )}

@@ -23,22 +23,13 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import getData from "@/utils/axiosGet";
 import { checkTypeUser, cleanToken } from "@/utils/security";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  Input,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
+import { Avatar, Button, Input } from "@mui/material";
 import deleteData from "@/utils/axiosDelete";
 import UtilSnackBar from "../Snackbar";
 import SimpleDialog from "../Dialog/SimpleDialog";
 import CursoForm from "../Forms/CursoForm";
 import EstadoSelect from "../Forms/EstadoSelect";
+import { Link as NextLink } from "next/link";
 // import { mainListItems, secondaryListItems } from './listItems';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
@@ -53,8 +44,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="http://quintoimpacto.net">
+        Quinto Impacto
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -125,8 +116,6 @@ export default function Dashboard() {
   const [openCursoForm, setOpenCursoForm] = useState(false);
   const [filterValue, setFilterValue] = useState("todos");
 
-  console.log(userLogged);
-
   let userType = checkTypeUser(userLogged);
   const router = useRouter();
 
@@ -168,7 +157,7 @@ export default function Dashboard() {
   };
 
   function logout() {
-    goTo("/login");
+    goTo("/");
     cleanToken();
   }
 
@@ -195,11 +184,7 @@ export default function Dashboard() {
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
-          <Toolbar
-            sx={{
-              pr: "24px",
-            }}
-          >
+          <Toolbar sx={{ backgroundColor: "#4052da", pr: "24px" }}>
             <IconButton
               edge="start"
               color="inherit"
@@ -212,6 +197,11 @@ export default function Dashboard() {
             >
               <MenuIcon />
             </IconButton>
+            <Avatar
+              alt="Logo Universidad XYZ"
+              src="/images/logo.png"
+              sx={{ marginRight: "1rem" }}
+            />
             <Typography
               component="h1"
               variant="h6"
@@ -243,13 +233,42 @@ export default function Dashboard() {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {/* {mainListItems} */}
-            12 3 4
+            <Button color="inherit" component={NextLink} href="/dashboard">
+              Dashboard / Cursos
+            </Button>
             <Divider sx={{ my: 1 }} />
-            {/* {secondaryListItems} */}
-            bla bla
+            {userType === "administrador" && (
+              <>
+                <Button
+                  color="inherit"
+                  component={NextLink}
+                  href="/administracion/profesores"
+                >
+                  Ver profesores
+                </Button>
+                <Divider sx={{ my: 1 }} />
+                <Button
+                  color="inherit"
+                  component={NextLink}
+                  href="/administracion/alumnos"
+                >
+                  Ver alumnos
+                </Button>
+              </>
+            )}
+            {userType === "profesor" && (
+              <Button
+                color="inherit"
+                component={NextLink}
+                href="/administracion/alumnos"
+              >
+                Ver alumnos
+              </Button>
+            )}
             <Divider sx={{ my: 1 }} />
-            <Button onClick={() => logout()}>Salir</Button>
+            <Button color="inherit" onClick={() => logout()}>
+              Salir
+            </Button>
           </List>
         </Drawer>
         <Box
@@ -296,13 +315,14 @@ export default function Dashboard() {
                     onClick={() => {
                       handleOpenCursoForm("create");
                     }}
+                    sx={{ backgroundColor: "#4052da" }}
                   >
                     Agregar curso
                   </Button>
                 </Grid>
               )}
             </Grid>
-            <Grid container spacing={3}>
+            {/* <Grid container spacing={3}>
               {dataCursos
                 .filter((item) =>
                   item.curso.nombre
@@ -359,11 +379,89 @@ export default function Dashboard() {
                   </Paper>
                 </Grid>
               )}
-              {/* <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  abajo
-                </Paper>
-              </Grid> */}
+            </Grid> */}
+
+            <Grid container spacing={3}>
+              {dataCursos
+                .filter((item) =>
+                  item.curso.nombre
+                    ?.toLowerCase()
+                    .includes(searchValue.toLowerCase())
+                )
+                .filter((item) =>
+                  userType === "alumno" ? !item.curso.deleted : true
+                )
+                .filter((item) =>
+                  userType === "profesor"
+                    ? item.curso.profesor &&
+                      item.curso.profesor.id === userLogged.id
+                    : true
+                )
+                .filter((item) =>
+                  filterValue === "habilitados"
+                    ? !item.curso.deleted
+                    : filterValue === "deshabilitados"
+                    ? item.curso.deleted
+                    : true
+                )
+                .map((item, index) => (
+                  <Grid item key={index} xs={12} md={8} lg={3}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        height: 350,
+                      }}
+                    >
+                      <Curso
+                        d={item}
+                        userType={userType}
+                        userLogged={userLogged}
+                        releaseProfesor={releaseProfesor}
+                        dataProfesores={dataProfesores}
+                        refreshData={refreshData}
+                        setData={setDataCursos}
+                        handleOpenSnackBar={handleOpenSnackBar}
+                        setCursoSelected={setCursoSelected}
+                        handleOpenCursoForm={handleOpenCursoForm}
+                        setBody={setBody}
+                      />
+                    </Paper>
+                  </Grid>
+                ))}
+              {dataCursos
+                .filter((item) =>
+                  item.curso.nombre
+                    ?.toLowerCase()
+                    .includes(searchValue.toLowerCase())
+                )
+                .filter((item) =>
+                  userType === "alumno" ? !item.curso.deleted : true
+                )
+                .filter((item) =>
+                  userType === "profesor"
+                    ? item.curso.profesor &&
+                      item.curso.profesor.id === userLogged.id
+                    : true
+                )
+                .filter((item) =>
+                  filterValue === "habilitados"
+                    ? !item.curso.deleted
+                    : filterValue === "deshabilitados"
+                    ? item.curso.deleted
+                    : true
+                ).length === 0 && (
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <Typography variant="body1">
+                      No se encontraron cursos disponibles.
+                    </Typography>
+                  </Paper>
+                </Grid>
+              )}
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

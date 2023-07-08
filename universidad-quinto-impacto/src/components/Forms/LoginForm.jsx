@@ -6,6 +6,10 @@ import {
   Box,
   FormControl,
   InputLabel,
+  AppBar,
+  Toolbar,
+  Avatar,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -74,10 +78,26 @@ const LoginForm = () => {
 
   return (
     <>
+      <AppBar position="static" sx={{ backgroundColor: "#4052da" }}>
+        <Toolbar>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Avatar
+              alt="Logo Universidad XYZ"
+              src="/images/logo.png"
+              sx={{ marginRight: "1rem" }}
+            />
+            <Typography variant="h6" component="div">
+              Universidad Quinto Impacto
+            </Typography>
+          </Box>
+        </Toolbar>
+      </AppBar>
       <Grid container justifyContent="center" alignItems="center" spacing={2}>
         <Grid item xs={12}>
           <Grid container justifyContent="center">
-            <h3>Iniciar sesión</h3>
+            <Typography variant="h4" sx={{ mt: 3, mb: 3 }}>
+              Iniciar sesión
+            </Typography>
           </Grid>
         </Grid>
         <Formik
@@ -104,7 +124,7 @@ const LoginForm = () => {
                 autoFocus
                 fullWidth
                 id="email"
-                label="Usuario"
+                label="Email"
                 required
                 sx={{ marginBottom: 4 }}
                 onChange={handleChange}
@@ -121,7 +141,6 @@ const LoginForm = () => {
                 }}
               />
               <FormControl fullWidth required>
-                <InputLabel htmlFor="password">Contraseña</InputLabel>
                 <TextField
                   disabled={isSubmitting}
                   label="Contraseña"
@@ -150,7 +169,11 @@ const LoginForm = () => {
                 fullWidth
                 size="large"
                 variant="contained"
-                sx={{ marginBottom: 7, marginTop: 3 }}
+                sx={{
+                  marginBottom: 7,
+                  marginTop: 3,
+                  backgroundColor: "#4052da",
+                }}
                 onClick={handleSubmit}
                 disabled={isSubmitting}
               >

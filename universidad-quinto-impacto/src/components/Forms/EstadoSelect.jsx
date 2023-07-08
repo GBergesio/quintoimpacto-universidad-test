@@ -3,7 +3,6 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 export default function EstadoSelect({ filterValue, handleFilterChange }) {
   return (
     <FormControl sx={{ m: 1, width: 250 }}>
-      <InputLabel id="filter-select-label">Filtrar</InputLabel>
       <Select
         labelId="filter-select-label"
         id="filter-select"

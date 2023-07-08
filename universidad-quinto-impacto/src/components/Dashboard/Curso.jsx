@@ -1,4 +1,4 @@
-import createData from "@/utils/axiosPost";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  Grid,
   IconButton,
   InputLabel,
   MenuItem,
@@ -15,10 +14,9 @@ import {
   Tooltip,
 } from "@mui/material";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
 import Edit from "@material-ui/icons/Edit";
-import ProfesorSelect from "../Forms/ProfesorSelect";
 import { CheckCircle, Warning } from "@material-ui/icons";
+import createData from "@/utils/axiosPost";
 import ListaAlumnosDialog from "../Dialog/ListaAlumnosDialog";
 
 export default function Curso({
@@ -231,11 +229,29 @@ export default function Curso({
       {userType === "alumno" && (
         <div>
           {userType === "alumno" && isAlumnoInscrito ? (
-            <Button variant="outlined" onClick={handleOpenTomarCurso}>
+            <Button
+              variant="outlined"
+              onClick={handleOpenTomarCurso}
+              sx={{
+                borderColor: "#4052da",
+                "&:hover": {
+                  borderColor: "#4454dc",
+                },
+              }}
+            >
               Dejar curso
             </Button>
           ) : (
-            <Button variant="outlined" onClick={handleOpenTomarCurso}>
+            <Button
+              variant="outlined"
+              onClick={handleOpenTomarCurso}
+              sx={{
+                borderColor: "#4052da",
+                "&:hover": {
+                  borderColor: "#4454dc",
+                },
+              }}
+            >
               Tomar curso
             </Button>
           )}
@@ -245,8 +261,26 @@ export default function Curso({
               <p>¿Está seguro de que desea tomar este curso?</p>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleCloseTomarCurso}>Cancelar</Button>
-              <Button onClick={handleTomarCurso}>
+              <Button
+                onClick={handleCloseTomarCurso}
+                sx={{
+                  borderColor: "#4052da",
+                  "&:hover": {
+                    borderColor: "#4454dc",
+                  },
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleTomarCurso}
+                sx={{
+                  borderColor: "#4052da",
+                  "&:hover": {
+                    borderColor: "#4454dc",
+                  },
+                }}
+              >
                 {isAlumnoInscrito ? "Dejar curso" : "Tomar curso"}
               </Button>
             </DialogActions>
@@ -257,7 +291,16 @@ export default function Curso({
         <div>
           {botonTexto === "Asignar profesor" ? (
             <>
-              <Button variant="outlined" onClick={handleOpen}>
+              <Button
+                variant="outlined"
+                onClick={handleOpen}
+                sx={{
+                  borderColor: "#4052da",
+                  "&:hover": {
+                    borderColor: "#4454dc",
+                  },
+                }}
+              >
                 {botonTexto}
               </Button>
               <Dialog open={open} onClose={handleClose}>
@@ -269,11 +312,6 @@ export default function Curso({
                   >
                     {({ handleSubmit }) => (
                       <Box component="form">
-                        {/* <ProfesorSelect
-                          dataProfesores={dataProfesores}
-                          value={selectedProfesor}
-                          onChange={handleSelectChange()}
-                        /> */}
                         <FormControl sx={{ minWidth: 200, mt: 1, mb: 1 }}>
                           <InputLabel id="profesor-label">
                             Seleccionar profesor
@@ -292,8 +330,24 @@ export default function Curso({
                           </Select>
                         </FormControl>
                         <DialogActions>
-                          <Button onClick={handleClose}>Cancelar</Button>
                           <Button
+                            onClick={handleClose}
+                            sx={{
+                              borderColor: "#4052da",
+                              "&:hover": {
+                                borderColor: "#4454dc",
+                              },
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            sx={{
+                              borderColor: "#4052da",
+                              "&:hover": {
+                                borderColor: "#4454dc",
+                              },
+                            }}
                             onClick={handleSubmit}
                             disabled={selectedProfesor === ""}
                           >
@@ -308,7 +362,16 @@ export default function Curso({
             </>
           ) : (
             <>
-              <Button variant="outlined" onClick={handleOpen}>
+              <Button
+                variant="outlined"
+                onClick={handleOpen}
+                sx={{
+                  borderColor: "#4052da",
+                  "&:hover": {
+                    borderColor: "#4454dc",
+                  },
+                }}
+              >
                 {botonTexto}
               </Button>
               <Dialog open={open} onClose={handleClose}>
@@ -317,8 +380,28 @@ export default function Curso({
                   <p>¿Está seguro de que desea eliminar al profesor?</p>
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Cancelar</Button>
-                  <Button onClick={handleReleaseProfesor}>Eliminar</Button>
+                  <Button
+                    onClick={handleClose}
+                    sx={{
+                      borderColor: "#4052da",
+                      "&:hover": {
+                        borderColor: "#4454dc",
+                      },
+                    }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleReleaseProfesor}
+                    sx={{
+                      borderColor: "#4052da",
+                      "&:hover": {
+                        borderColor: "#4454dc",
+                      },
+                    }}
+                  >
+                    Eliminar
+                  </Button>
                 </DialogActions>
               </Dialog>
             </>
@@ -329,7 +412,13 @@ export default function Curso({
         <Button
           variant="outlined"
           onClick={handleOpenListaAlumnos}
-          sx={{ mt: 3 }}
+          sx={{
+            mt: 3,
+            borderColor: "#4052da",
+            "&:hover": {
+              borderColor: "#4454dc",
+            },
+          }}
         >
           Ver lista de alumnos
         </Button>
