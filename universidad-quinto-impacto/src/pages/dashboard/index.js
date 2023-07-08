@@ -1,4 +1,4 @@
-import CommonLayout from "@/components/Dashboard/CommonLayout";
+import CommonLayout from "@/components/Layout/CommonLayout";
 // import Dashboard from "@/components/Dashboard/Dashboard_old";
 import Dashboard from "@/components/Dashboard/Dashboard";
 import React from "react";

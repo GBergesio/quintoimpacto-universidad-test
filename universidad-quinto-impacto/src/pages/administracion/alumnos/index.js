@@ -1,7 +1,11 @@
-import React from 'react'
+import CommonLayout from "@/components/Layout/CommonLayout";
+import Alumnos from "@/components/Tables/Alumnos";
+import React from "react";
 
 export default function index() {
   return (
-    <div>index</div>
-  )
+    <>
+      <CommonLayout componente={<Alumnos />} />
+    </>
+  );
 }

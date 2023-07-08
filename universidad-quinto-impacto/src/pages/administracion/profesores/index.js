@@ -1,4 +1,4 @@
-import CommonLayout from "@/components/Dashboard/CommonLayout";
+import CommonLayout from "@/components/Layout/CommonLayout";
 import React from "react";
 
 export default function index() {
