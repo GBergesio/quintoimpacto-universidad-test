@@ -1,0 +1,316 @@
+import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import MuiDrawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import MuiAppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Link from "@mui/material/Link";
+import Curso from "./Curso";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import getData from "@/utils/axiosGet";
+import { checkTypeUser, cleanToken } from "@/utils/security";
+import { Avatar, Button, Input } from "@mui/material";
+import deleteData from "@/utils/axiosDelete";
+import UtilSnackBar from "../Snackbar";
+import SimpleDialog from "../Dialog/SimpleDialog";
+import CursoForm from "../Forms/CursoForm";
+import EstadoSelect from "../Forms/EstadoSelect";
+import { Link as NextLink } from "next/link";
+// import { mainListItems, secondaryListItems } from './listItems';
+// import Chart from './Chart';
+// import Deposits from './Deposits';
+// import Orders from './Orders';
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="http://quintoimpacto.net">
+        Quinto Impacto
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
+
+const drawerWidth = 240;
+
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  zIndex: theme.zIndex.drawer + 1,
+  transition: theme.transitions.create(["width", "margin"], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  ...(open && {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(["width", "margin"], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  }),
+}));
+
+const Drawer = styled(MuiDrawer, {
+  shouldForwardProp: (prop) => prop !== "open",
+})(({ theme, open }) => ({
+  "& .MuiDrawer-paper": {
+    position: "relative",
+    whiteSpace: "nowrap",
+    width: drawerWidth,
+    transition: theme.transitions.create("width", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    boxSizing: "border-box",
+    ...(!open && {
+      overflowX: "hidden",
+      transition: theme.transitions.create("width", {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      width: theme.spacing(7),
+      [theme.breakpoints.up("sm")]: {
+        width: theme.spacing(9),
+      },
+    }),
+  },
+}));
+
+const defaultTheme = createTheme();
+import React from "react";
+
+export default function Dashboard() {
+  //USE STATE
+  const [open, setOpen] = useState(true);
+  const [dataCursos, setDataCursos] = useState([]);
+  const [cursoSelected, setCursoSelected] = useState([]);
+  const [dataProfesores, setProfesoresData] = useState([]);
+  const [userLogged, setUserLogged] = useState([]);
+  const [bodySnack, setBodySnack] = useState("");
+  const [severity, setSeverity] = useState("");
+  const [openSnack, setOpenSnack] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [body, setBody] = useState("create");
+  const [openCursoForm, setOpenCursoForm] = useState(false);
+  const [filterValue, setFilterValue] = useState("todos");
+
+  let userType = checkTypeUser(userLogged);
+  const router = useRouter();
+
+  //HANDLERS
+  const handleOpenSnackBar = (body, severity) => {
+    setOpenSnack(true);
+    setBodySnack(body);
+    setSeverity(severity);
+  };
+
+  const handleCloseSnackBar = (reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnack(false);
+  };
+
+  const handleOpenCursoForm = (body) => {
+    setOpenCursoForm(true);
+    setBody(body);
+  };
+
+  const handleCloseCursoForm = () => {
+    setOpenCursoForm(false);
+    setBody("create");
+    setCursoSelected([]);
+  };
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilterValue(event.target.value);
+  };
+
+  const goTo = (site) => {
+    router.push(site, undefined, { shallow: true });
+  };
+
+  function logout() {
+    goTo("/");
+    cleanToken();
+  }
+
+  const refreshData = async (endpoint, setDataFunc) => {
+    return await getData(endpoint, goTo).then((res) => {
+      setDataFunc(res.dto);
+    });
+  };
+
+  async function releaseProfesor(id) {
+    await deleteData("/profesores/current/release/" + id, handleOpenSnackBar);
+    refreshData("/cursos/current", setDataCursos);
+  }
+
+  //USE EFFECT
+  useEffect(() => {
+    refreshData("/cursos/current", setDataCursos);
+    refreshData("/currentUser", setUserLogged);
+    refreshData("/profesores/current", setProfesoresData);
+  }, []);
+  return (
+    <Box >
+      <Toolbar />
+      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Grid container alignItems="center" spacing={2} sx={{ mt: 4, mb: 4 }}>
+          <Grid item xs={12} sm={6}>
+            <Input
+              fullWidth
+              placeholder="Buscar curso"
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+            />
+          </Grid>
+          {userType === "administrador" && (
+            <Grid item xs={12} sm={4}>
+              <EstadoSelect
+                filterValue={filterValue}
+                handleFilterChange={handleFilterChange}
+              />
+            </Grid>
+          )}
+          {userType === "administrador" && (
+            <Grid item xs={12} sm={2}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => {
+                  handleOpenCursoForm("create");
+                }}
+                sx={{ backgroundColor: "#4052da" }}
+              >
+                Agregar curso
+              </Button>
+            </Grid>
+          )}
+        </Grid>{" "}
+        <Grid container spacing={3}>
+          {dataCursos
+            .filter((item) =>
+              item.curso.nombre
+                ?.toLowerCase()
+                .includes(searchValue.toLowerCase())
+            )
+            .filter((item) =>
+              userType === "alumno" ? !item.curso.deleted : true
+            )
+            .filter((item) =>
+              userType === "profesor"
+                ? item.curso.profesor &&
+                  item.curso.profesor.id === userLogged.id
+                : true
+            )
+            .filter((item) =>
+              filterValue === "habilitados"
+                ? !item.curso.deleted
+                : filterValue === "deshabilitados"
+                ? item.curso.deleted
+                : true
+            )
+            .map((item, index) => (
+              <Grid item key={index} xs={12} md={8} lg={3}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    height: 350,
+                  }}
+                >
+                  <Curso
+                    d={item}
+                    userType={userType}
+                    userLogged={userLogged}
+                    releaseProfesor={releaseProfesor}
+                    dataProfesores={dataProfesores}
+                    refreshData={refreshData}
+                    setData={setDataCursos}
+                    handleOpenSnackBar={handleOpenSnackBar}
+                    setCursoSelected={setCursoSelected}
+                    handleOpenCursoForm={handleOpenCursoForm}
+                    setBody={setBody}
+                  />
+                </Paper>
+              </Grid>
+            ))}
+          {dataCursos
+            .filter((item) =>
+              item.curso.nombre
+                ?.toLowerCase()
+                .includes(searchValue.toLowerCase())
+            )
+            .filter((item) =>
+              userType === "alumno" ? !item.curso.deleted : true
+            )
+            .filter((item) =>
+              userType === "profesor"
+                ? item.curso.profesor &&
+                  item.curso.profesor.id === userLogged.id
+                : true
+            )
+            .filter((item) =>
+              filterValue === "habilitados"
+                ? !item.curso.deleted
+                : filterValue === "deshabilitados"
+                ? item.curso.deleted
+                : true
+            ).length === 0 && (
+            <Grid item xs={12}>
+              <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                <Typography variant="body1">
+                  No se encontraron cursos disponibles.
+                </Typography>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+        <Copyright sx={{ pt: 4 }} />
+        <UtilSnackBar
+          open={openSnack}
+          handleCloseSnackBar={handleCloseSnackBar}
+          severity={severity}
+          body={bodySnack}
+        />
+        <SimpleDialog
+          open={openCursoForm}
+          close={handleCloseCursoForm}
+          titulo={body === "create" ? "Crear curso" : "Editar curso"}
+          form={
+            <CursoForm
+              cSelected={cursoSelected}
+              dataProfesores={dataProfesores}
+              refreshData={refreshData}
+              handleOpenSnackBar={handleOpenSnackBar}
+              handleClose={handleCloseCursoForm}
+              setData={setDataCursos}
+              body={body}
+            />
+          }
+        />
+      </Container>
+    </Box>
+  );
+}

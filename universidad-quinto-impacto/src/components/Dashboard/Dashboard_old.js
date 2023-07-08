@@ -321,66 +321,7 @@ export default function Dashboard() {
                   </Button>
                 </Grid>
               )}
-            </Grid>
-            {/* <Grid container spacing={3}>
-              {dataCursos
-                .filter((item) =>
-                  item.curso.nombre
-                    ?.toLowerCase()
-                    .includes(searchValue.toLowerCase())
-                )
-                .filter((item) =>
-                  userType === "alumno" ? !item.curso.deleted : true
-                )
-                .filter((item) =>
-                  userType === "profesor"
-                    ? item.curso.profesor &&
-                      item.curso.profesor.id === userLogged.id
-                    : true
-                )
-                .map((item, index) => (
-                  <Grid item key={index} xs={12} md={8} lg={3}>
-                    <Paper
-                      sx={{
-                        p: 2,
-                        display: "flex",
-                        flexDirection: "column",
-                        height: 350,
-                      }}
-                    >
-                      <Curso
-                        d={item}
-                        userType={userType}
-                        userLogged={userLogged}
-                        releaseProfesor={releaseProfesor}
-                        dataProfesores={dataProfesores}
-                        refreshData={refreshData}
-                        setData={setDataCursos}
-                        handleOpenSnackBar={handleOpenSnackBar}
-                        setCursoSelected={setCursoSelected}
-                        handleOpenCursoForm={handleOpenCursoForm}
-                        setBody={setBody}
-                      />
-                    </Paper>
-                  </Grid>
-                ))}
-              {dataCursos.filter((item) =>
-                item.curso.nombre
-                  ?.toLowerCase()
-                  .includes(searchValue.toLowerCase())
-              ).length === 0 && (
-                <Grid item xs={12}>
-                  <Paper
-                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
-                  >
-                    <Typography variant="body1">
-                      No se encontraron cursos disponibles.
-                    </Typography>
-                  </Paper>
-                </Grid>
-              )}
-            </Grid> */}
-
+            </Grid>{" "}
             <Grid container spacing={3}>
               {dataCursos
                 .filter((item) =>

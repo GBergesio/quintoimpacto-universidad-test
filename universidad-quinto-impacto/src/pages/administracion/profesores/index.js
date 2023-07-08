@@ -1,7 +1,22 @@
-import React from 'react'
+import CommonLayout from "@/components/Dashboard/CommonLayout";
+import React from "react";
 
 export default function index() {
   return (
-    <div>index</div>
-  )
+    <>
+      <CommonLayout
+        componente={
+          <>
+            <div>HOLA</div>
+            <div>HOLA</div>
+            <div>HOLA</div>
+            <div>HOLA</div>
+            <div>HOLA</div>
+            <div>HOLA</div>
+            <div>HOLA</div>
+          </>
+        }
+      />
+    </>
+  );
 }
