@@ -125,6 +125,8 @@ export default function Dashboard() {
   const [openCursoForm, setOpenCursoForm] = useState(false);
   const [filterValue, setFilterValue] = useState("todos");
 
+  console.log(userLogged);
+
   let userType = checkTypeUser(userLogged);
   const router = useRouter();
 
@@ -278,7 +280,7 @@ export default function Dashboard() {
                   onChange={(e) => setSearchValue(e.target.value)}
                 />
               </Grid>
-              {userType !== "alumno" && (
+              {userType === "administrador" && (
                 <Grid item xs={12} sm={4}>
                   <EstadoSelect
                     filterValue={filterValue}
@@ -310,6 +312,12 @@ export default function Dashboard() {
                 .filter((item) =>
                   userType === "alumno" ? !item.curso.deleted : true
                 )
+                .filter((item) =>
+                  userType === "profesor"
+                    ? item.curso.profesor &&
+                      item.curso.profesor.id === userLogged.id
+                    : true
+                )
                 .map((item, index) => (
                   <Grid item key={index} xs={12} md={8} lg={3}>
                     <Paper
@@ -317,7 +325,7 @@ export default function Dashboard() {
                         p: 2,
                         display: "flex",
                         flexDirection: "column",
-                        height: 280,
+                        height: 350,
                       }}
                     >
                       <Curso

@@ -27,11 +27,12 @@ const createData = async (
       resetForm();
     })
     .catch((error) => {
-      if (error) {
-        handleOpenSnackBar(error.response.data.message, "error");
-      } else {
-        handleOpenSnackBar(error.response.data.message, "error");
-      }
+      console.log(error);
+      // if (error) {
+      //   handleOpenSnackBar(error.response.data.message, "error");
+      // } else {
+      //   handleOpenSnackBar(error.response.data.message, "error");
+      // }
     });
 };
 

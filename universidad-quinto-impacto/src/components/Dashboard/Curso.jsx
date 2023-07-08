@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import Edit from "@material-ui/icons/Edit";
 import ProfesorSelect from "../Forms/ProfesorSelect";
 import { CheckCircle, Warning } from "@material-ui/icons";
+import ListaAlumnosDialog from "../Dialog/ListaAlumnosDialog";
 
 export default function Curso({
   d,
@@ -39,6 +40,7 @@ export default function Curso({
   const [profesores, setProfesores] = useState([]);
   const [open, setOpen] = useState(false);
   const [openTomarCurso, setOpenTomarCurso] = useState(false);
+  const [alumnosCurso, setAlumnosCurso] = useState([]);
 
   const initialValues = {
     idProfesor: "",
@@ -61,6 +63,8 @@ export default function Curso({
       setBotonTexto("Tomar curso");
     }
   }, [d.curso.profesor, userType]);
+
+  console.log("dat", d);
 
   useEffect(() => {
     const profesoresData = dataProfesores.map((item) => item.profesor);
@@ -144,29 +148,64 @@ export default function Curso({
     refreshData("/cursos/current", setData);
   };
 
+  const [openListaAlumnos, setOpenListaAlumnos] = useState(false);
+
+  const handleOpenListaAlumnos = () => {
+    setAlumnosCurso(d.alumnos);
+    setOpenListaAlumnos(true);
+  };
+
+  const handleCloseListaAlumnos = () => {
+    setOpenListaAlumnos(false);
+  };
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <h4 style={{ marginRight: "5px" }}>{d.curso.nombre}</h4>
-        <Tooltip title={isDeleted ? "Curso deshabilitado" : "Curso habilitado"}>
-          <IconButton color={isDeleted ? "warning" : "success"}>
-            {isDeleted ? (
-              <Warning fontSize="small" />
-            ) : (
-              <CheckCircle fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Editar curso">
-          <IconButton>
-            <Edit
-              fontSize="small"
-              onClick={() => {
-                handleCursoSelected(d);
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        <h4 style={{ marginRight: "5px" }}>
+          {d.curso.nombre.length > 19
+            ? `${d.curso.nombre.substring(0, 17)}...`
+            : d.curso.nombre}
+        </h4>
+        {userType === "alumno" && isAlumnoInscrito ? (
+          <>
+            {" "}
+            <Tooltip title="Ya estas inscripto en este curso">
+              <IconButton color="success">
+                <CheckCircle fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : (
+          ""
+        )}
+        {userType === "administrador" ? (
+          <>
+            <Tooltip
+              title={isDeleted ? "Curso deshabilitado" : "Curso habilitado"}
+            >
+              <IconButton color={isDeleted ? "warning" : "success"}>
+                {isDeleted ? (
+                  <Warning fontSize="small" />
+                ) : (
+                  <CheckCircle fontSize="small" />
+                )}
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Editar curso">
+              <IconButton>
+                <Edit
+                  fontSize="small"
+                  onClick={() => {
+                    handleCursoSelected(d);
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </>
+        ) : (
+          ""
+        )}
       </div>
       <h5>
         Profesor:{" "}
@@ -286,6 +325,20 @@ export default function Curso({
           )}
         </div>
       )}
+      {userType !== "alumnos" && (
+        <Button
+          variant="outlined"
+          onClick={handleOpenListaAlumnos}
+          sx={{ mt: 3 }}
+        >
+          Ver lista de alumnos
+        </Button>
+      )}
+      <ListaAlumnosDialog
+        open={openListaAlumnos}
+        handleClose={handleCloseListaAlumnos}
+        alumnos={alumnosCurso}
+      />
     </div>
   );
 }
