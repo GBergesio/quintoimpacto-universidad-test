@@ -7,6 +7,8 @@ import org.springframework.security.core.Authentication;
 public interface AdministradorService {
 
     Boolean isAdmin(Authentication authentication);
+    Boolean emailExist(UserRequest alumnoRequest);
+    Boolean dniExist(UserRequest alumnoRequest);
     ResponseEntity<?> loggedUser(Authentication authentication);
     ResponseEntity<?> getAllAdmin(Authentication authentication);
     ResponseEntity<?> createAdmin(UserRequest adminRequest,Authentication authentication);

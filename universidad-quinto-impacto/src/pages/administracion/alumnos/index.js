@@ -22,27 +22,35 @@ export default function index() {
     });
   };
 
-  //USE EFFECT
-  useEffect(() => {
-    refreshData("/currentUser", setUserLogged);
-  }, []);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserLogged = async () => {
       try {
-        if (userLogged === "alumnos") {
-          goTo("/dashboard");
-        } else if (userLogged.deleted) {
-          goTo("/dashboard");
+        const userData = await getData("/currentUser", goTo);
+        if (userData && userData.dto) {
+          setUserLogged(userData.dto);
+          setLoading(false);
+        } else {
+          setUserLogged({});
         }
       } catch (error) {
         console.log(error);
       }
     };
-  
+
     fetchUserLogged();
   }, []);
 
+  useEffect(() => {
+    if (!loading) {
+      if (userLogged.tipo === "alumno") {
+        goTo("/dashboard");
+      } else if (userLogged.deleted) {
+        goTo("/dashboard");
+      }
+    }
+  }, [loading, userLogged]);
   const initialValues = {
     nombre: userSelected.length === 0 ? "" : userSelected.alumno.nombre,
     apellido: userSelected.length === 0 ? "" : userSelected.alumno.apellido,

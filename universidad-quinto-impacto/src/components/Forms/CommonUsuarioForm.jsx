@@ -16,6 +16,7 @@ import createData from "@/utils/axiosPost";
 import patchData from "@/utils/axiosPatch";
 import { CommonUsuarioSchema } from "@/schemas/CommonUsuarioSchema";
 import { Warning } from "@material-ui/icons";
+import createDataNoAuth from "@/utils/axiosPostNoAuth";
 
 export default function CommonUsuarioForm({
   refreshData,
@@ -40,13 +41,23 @@ export default function CommonUsuarioForm({
     };
 
     if (body === "create") {
-      await createData(
-        dataToSend,
-        uris[0],
-        handleClose,
-        handleOpenSnackBar,
-        resetForm
-      );
+      if (from === "admin") {
+        await createData(
+          dataToSend,
+          uris[0],
+          handleClose,
+          handleOpenSnackBar,
+          resetForm
+        );
+      } else {
+        await createDataNoAuth(
+          dataToSend,
+          uris[0],
+          handleClose,
+          handleOpenSnackBar,
+          resetForm
+        );
+      }
     } else if (body === "edit") {
       await patchData(
         dataToSend,
@@ -56,7 +67,11 @@ export default function CommonUsuarioForm({
         resetForm
       );
     }
-    refreshData(uris[0], setData);
+    if (from === "admin") {
+      refreshData(uris[0], setData);
+    } else {
+      refreshData();
+    }
   };
 
   return (
@@ -183,16 +198,20 @@ export default function CommonUsuarioForm({
                 />
               </FormControl>
             )}
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={values.deleted}
-                  onChange={handleChange("deleted")}
-                />
-              }
-              label={isDeleted}
-            />
-            {body === "create" ? (
+            {isDeleted ? (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={values.deleted}
+                    onChange={handleChange("deleted")}
+                  />
+                }
+                label={isDeleted}
+              />
+            ) : (
+              ""
+            )}
+            {body === "create" && from === "admin" ? (
               <Grid container alignItems="center" sx={{ mt: 2 }}>
                 <Tooltip title="El password por defecto es 123">
                   <Grid item>
@@ -225,21 +244,25 @@ export default function CommonUsuarioForm({
             >
               {body === "create" ? "Crear" : "Editar"}
             </Button>
-            <Button
-              onClick={() => {
-                resetForm();
-                handleClose();
-              }}
-              variant="contained"
-              sx={{
-                backgroundColor: "#de0734",
-                "&:hover": {
-                  backgroundColor: "#d82c59",
-                },
-              }}
-            >
-              Salir
-            </Button>
+            {from === "admin" ? (
+              <Button
+                onClick={() => {
+                  resetForm();
+                  handleClose();
+                }}
+                variant="contained"
+                sx={{
+                  backgroundColor: "#de0734",
+                  "&:hover": {
+                    backgroundColor: "#d82c59",
+                  },
+                }}
+              >
+                Salir
+              </Button>
+            ) : (
+              ""
+            )}
           </Box>
         )}
       </Formik>

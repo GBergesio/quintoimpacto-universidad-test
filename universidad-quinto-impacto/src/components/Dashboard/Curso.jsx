@@ -117,11 +117,16 @@ export default function Curso({
       tipo: tipo,
     };
 
+    function resetForm() {
+      return;
+    }
+
     await createData(
       dataToSend,
       "/cursos/current/setCursoAlumno",
       handleCloseTomarCurso,
-      handleOpenSnackBar
+      handleOpenSnackBar,
+      resetForm
     );
 
     refreshData("/cursos/current", setData);

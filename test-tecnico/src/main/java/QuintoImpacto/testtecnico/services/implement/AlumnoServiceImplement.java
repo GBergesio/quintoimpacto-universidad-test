@@ -1,6 +1,7 @@
 package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.combinacion.AlumnoCursoDTO;
+import QuintoImpacto.testtecnico.dtos.request.CursoAlumnoRequest;
 import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.models.Curso;
 import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
@@ -47,6 +48,26 @@ public class AlumnoServiceImplement implements AlumnoService {
     }
 
     @Override
+    public Boolean emailExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
+                || profesorRepository.existsByEmail(alumnoRequest.getEmail())
+                || administradorRepository.existsByEmail(alumnoRequest.getEmail())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean dniExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByDni(alumnoRequest.getDni())
+                || profesorRepository.existsByDni(alumnoRequest.getDni())
+                || administradorRepository.existsByDni(alumnoRequest.getDni())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ResponseEntity<?> getAllAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
         List<AlumnoCursoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoCursoDTO.class);
@@ -55,30 +76,35 @@ public class AlumnoServiceImplement implements AlumnoService {
 
     @Override
     public ResponseEntity<?> createAlumno(UserRequest alumnoRequest,Authentication authentication) {
-//        Boolean isAdminActive = loggedUser(authentication);
-//
-//        if (!isAdminActive){
-//            return ResponseUtils.forbiddenResponse();
-//        }
+
         List<Alumno> alumnos = alumnoRepository.findAll();
 
-        Boolean alumnosExist = alumnos.stream().anyMatch(a -> a.getDni().equals(alumnoRequest.getDni()));
-
-        if (StringUtils.isBlank(alumnoRequest.getDni()))
+        if (StringUtils.isBlank(alumnoRequest.getDni())) {
             return ResponseUtils.badRequestResponse("Dni requerido");
-        if (alumnosExist)
-            return ResponseUtils.badRequestResponse("Dni en uso");
-        if (StringUtils.isBlank(alumnoRequest.getNombre()))
+        }
+        Boolean isDniExists = dniExist(alumnoRequest);
+        if (isDniExists) {
+            return ResponseUtils.badRequestResponse("DNI en uso");
+        }
+        if (StringUtils.isBlank(alumnoRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(alumnoRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(alumnoRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(alumnoRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
-        if (StringUtils.isBlank(alumnoRequest.getPassword()))
+        }
+        Boolean isEmailExists = emailExist(alumnoRequest);
+        if (isEmailExists) {
+            return ResponseUtils.badRequestResponse("Email en uso");
+        }
+        if (StringUtils.isBlank(alumnoRequest.getPassword())) {
             return ResponseUtils.badRequestResponse("Password requerido");
-
+        }
         Alumno newAlumno = new Alumno();
         newAlumno.setDni(alumnoRequest.getDni());
         newAlumno.setNombre(alumnoRequest.getNombre());
@@ -106,23 +132,34 @@ public class AlumnoServiceImplement implements AlumnoService {
         if (alumno == null) {
             return ResponseUtils.badRequestResponse("Alumno no encontrado");
         }
+        if (StringUtils.isBlank(alumnoRequest.getDni())) {
+            return ResponseUtils.badRequestResponse("Dni requerido");
+        }
+        Boolean isDniExists = dniExist(alumnoRequest);
+
         if(!alumno.getDni().equals(alumnoRequest.getDni())){
-            Alumno alumnoDni = alumnoRepository.findByDni(alumnoRequest.getDni());
-            if(alumnoDni != null){
+            if (isDniExists) {
                 return ResponseUtils.badRequestResponse("DNI en uso");
             }
         }
-
-        if (StringUtils.isBlank(alumnoRequest.getDni()))
-            return ResponseUtils.badRequestResponse("Dni requerido");
-        if (StringUtils.isBlank(alumnoRequest.getNombre()))
+        if (StringUtils.isBlank(alumnoRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(alumnoRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(alumnoRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(alumnoRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(alumnoRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
+        }
+        Boolean isEmailExists = emailExist(alumnoRequest);
+        if(!alumno.getEmail().equals(alumnoRequest.getEmail())){
+            if (isEmailExists) {
+                return ResponseUtils.badRequestResponse("Email en uso");
+            }
+        }
 
         alumno.setDni(alumnoRequest.getDni());
         alumno.setNombre(alumnoRequest.getNombre());

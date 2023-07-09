@@ -42,6 +42,26 @@ public class AdministradorServiceImplement implements AdministradorService {
     }
 
     @Override
+    public Boolean emailExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
+                || profesorRepository.existsByEmail(alumnoRequest.getEmail())
+                || administradorRepository.existsByEmail(alumnoRequest.getEmail())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean dniExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByDni(alumnoRequest.getDni())
+                || profesorRepository.existsByDni(alumnoRequest.getDni())
+                || administradorRepository.existsByDni(alumnoRequest.getDni())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ResponseEntity<?> loggedUser(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
         if(loggedUser == null){
@@ -76,22 +96,32 @@ public class AdministradorServiceImplement implements AdministradorService {
 
         administradores = administradorRepository.findAll();
 
-        Boolean adminExist = administradores.stream().anyMatch(a -> a.getDni().equals(adminRequest.getDni()));
-
-        if (StringUtils.isBlank(adminRequest.getDni()))
+        if (StringUtils.isBlank(adminRequest.getDni())) {
             return ResponseUtils.badRequestResponse("Dni requerido");
-        if (adminExist)
-            return ResponseUtils.badRequestResponse("Dni en uso");
-        if (StringUtils.isBlank(adminRequest.getNombre()))
+        }
+        Boolean isDniExists = dniExist(adminRequest);
+        if (isDniExists) {
+            return ResponseUtils.badRequestResponse("DNI en uso");
+        }
+        if (StringUtils.isBlank(adminRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(adminRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(adminRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(adminRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(adminRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(adminRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(adminRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
-        if (StringUtils.isBlank(adminRequest.getPassword()))
+        }
+        Boolean isEmailExists = emailExist(adminRequest);
+        if (isEmailExists) {
+            return ResponseUtils.badRequestResponse("Email en uso");
+        }
+        if (StringUtils.isBlank(adminRequest.getPassword())) {
             return ResponseUtils.badRequestResponse("Password requerido");
+        }
 
         Administrador newAdmin = new Administrador();
         newAdmin.setDni(adminRequest.getDni());
@@ -120,23 +150,34 @@ public class AdministradorServiceImplement implements AdministradorService {
         if (administrador == null) {
             return ResponseUtils.badRequestResponse("Administrador no encontrado");
         }
+        if (StringUtils.isBlank(adminRequest.getDni())){
+            return ResponseUtils.badRequestResponse("Dni requerido");
+        }
+        Boolean isDniExists = dniExist(adminRequest);
+
         if(!administrador.getDni().equals(adminRequest.getDni())){
-            Administrador admDNI = administradorRepository.findByDni(adminRequest.getDni());
-            if(admDNI != null){
+            if (isDniExists) {
                 return ResponseUtils.badRequestResponse("DNI en uso");
             }
         }
-
-        if (StringUtils.isBlank(adminRequest.getDni()))
-            return ResponseUtils.badRequestResponse("Dni requerido");
-        if (StringUtils.isBlank(adminRequest.getNombre()))
+        if (StringUtils.isBlank(adminRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(adminRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(adminRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(adminRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(adminRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(adminRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(adminRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
+        }
+        Boolean isEmailExists = emailExist(adminRequest);
+        if(!administrador.getEmail().equals(adminRequest.getEmail())){
+            if (isEmailExists) {
+                return ResponseUtils.badRequestResponse("Email en uso");
+            }
+        }
 
         administrador.setDni(adminRequest.getDni());
         administrador.setNombre(adminRequest.getNombre());

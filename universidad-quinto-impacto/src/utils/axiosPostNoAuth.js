@@ -1,18 +1,14 @@
 import axios from "axios";
-import { getToken } from "./security";
 
 const apiUrl = "http://localhost:8080";
 
-const token = getToken();
-
 const config = {
   headers: {
-    Authorization: `Bearer ${token}`,
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-methods": "*",
   },
 };
-const createData = async (
+const createDataNoAuth = async (
   params,
   servlet,
   handleClose,
@@ -27,12 +23,10 @@ const createData = async (
       resetForm();
     })
     .catch((error) => {
-      console.log("ERROR", error);
-
       const errorMessage =
-        error.response?.data?.message || "Se ha producido un error";
+        error.response.data.message || "Se ha producido un error";
       handleOpenSnackBar(errorMessage, "error");
     });
 };
 
-export default createData;
+export default createDataNoAuth;

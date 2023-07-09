@@ -14,4 +14,8 @@ public interface AdministradorRepository extends JpaRepository<Administrador, Lo
     public Administrador findByEmail(String email);
     public Optional<Administrador> findById(Long id);
     public List<Administrador> findAll();
+
+    boolean existsByEmail(String email);
+
+    boolean existsByDni(String dni);
 }

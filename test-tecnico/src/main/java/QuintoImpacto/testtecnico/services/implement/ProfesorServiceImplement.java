@@ -49,6 +49,26 @@ public class ProfesorServiceImplement implements ProfesorService {
     }
 
     @Override
+    public Boolean emailExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
+                || profesorRepository.existsByEmail(alumnoRequest.getEmail())
+                || administradorRepository.existsByEmail(alumnoRequest.getEmail())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean dniExist(UserRequest alumnoRequest) {
+        if (alumnoRepository.existsByDni(alumnoRequest.getDni())
+                || profesorRepository.existsByDni(alumnoRequest.getDni())
+                || administradorRepository.existsByDni(alumnoRequest.getDni())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public ResponseEntity<?> getAllProfesores() {
         List<Profesor> profesores = profesorRepository.findAll(); // Obtén la lista de profesores desde alguna fuente de datos
         List<ProfesorCursosDTO> profesorDTOS = MapperUtil.convertToDtoList(profesores, ProfesorCursosDTO.class);
@@ -66,22 +86,32 @@ public class ProfesorServiceImplement implements ProfesorService {
 
         profesores = profesorRepository.findAll();
 
-        Boolean profesorExist = profesores.stream().anyMatch(p -> p.getDni().equals(profesorRequest.getDni()));
-
-        if (StringUtils.isBlank(profesorRequest.getDni()))
+        if (StringUtils.isBlank(profesorRequest.getDni())) {
             return ResponseUtils.badRequestResponse("Dni requerido");
-        if (profesorExist)
-            return ResponseUtils.badRequestResponse("Dni en uso");
-        if (StringUtils.isBlank(profesorRequest.getNombre()))
+        }
+        Boolean isDniExists = dniExist(profesorRequest);
+        if (isDniExists) {
+            return ResponseUtils.badRequestResponse("DNI en uso");
+        }
+        if (StringUtils.isBlank(profesorRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(profesorRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(profesorRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(profesorRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
-        if (StringUtils.isBlank(profesorRequest.getPassword()))
+        }
+        Boolean isEmailExists = emailExist(profesorRequest);
+        if (isEmailExists) {
+            return ResponseUtils.badRequestResponse("Email en uso");
+        }
+        if (StringUtils.isBlank(profesorRequest.getPassword())) {
             return ResponseUtils.badRequestResponse("Password requerido");
+        }
 
         Profesor newProfesor = new Profesor();
         newProfesor.setDni(profesorRequest.getDni());
@@ -109,22 +139,36 @@ public class ProfesorServiceImplement implements ProfesorService {
         if (profesor == null) {
             return ResponseUtils.badRequestResponse("Profesor no encontrado");
         }
+
+        if (StringUtils.isBlank(profesorRequest.getDni())) {
+            return ResponseUtils.badRequestResponse("Dni requerido");
+        }
+        Boolean isDniExists = dniExist(profesorRequest);
+
         if(!profesor.getDni().equals(profesorRequest.getDni())){
-            Profesor profesorDni = profesorRepository.findByDni(profesorRequest.getDni());
-            if(profesorDni != null){
+            if (isDniExists) {
                 return ResponseUtils.badRequestResponse("DNI en uso");
             }
         }
-        if (StringUtils.isBlank(profesorRequest.getDni()))
-            return ResponseUtils.badRequestResponse("Dni requerido");
-        if (StringUtils.isBlank(profesorRequest.getNombre()))
+
+        if (StringUtils.isBlank(profesorRequest.getNombre())) {
             return ResponseUtils.badRequestResponse("Nombre requerido");
-        if (StringUtils.isBlank(profesorRequest.getApellido()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getApellido())) {
             return ResponseUtils.badRequestResponse("Apellido requerido");
-        if (StringUtils.isBlank(profesorRequest.getCelular()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getCelular())) {
             return ResponseUtils.badRequestResponse("Celular requerido");
-        if (StringUtils.isBlank(profesorRequest.getEmail()))
+        }
+        if (StringUtils.isBlank(profesorRequest.getEmail())) {
             return ResponseUtils.badRequestResponse("Email requerido");
+        }
+        Boolean isEmailExists = emailExist(profesorRequest);
+        if(!profesor.getEmail().equals(profesorRequest.getEmail())){
+            if (isEmailExists) {
+                return ResponseUtils.badRequestResponse("Email en uso");
+            }
+        }
 
         profesor.setDni(profesorRequest.getDni());
         profesor.setNombre(profesorRequest.getNombre());

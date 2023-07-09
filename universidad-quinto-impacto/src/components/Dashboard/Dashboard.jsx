@@ -110,8 +110,6 @@ export default function Dashboard() {
   const [filterValue, setFilterValue] = useState("todos");
 
   let userType = checkTypeUser(userLogged);
-  console.log(userLogged);
-
   const router = useRouter();
 
   //HANDLERS

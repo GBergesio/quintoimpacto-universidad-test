@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 
 public interface AlumnoService {
     Boolean loggedUser(Authentication authentication);
+    Boolean emailExist(UserRequest alumnoRequest);
+    Boolean dniExist(UserRequest alumnoRequest);
     ResponseEntity<?> getAllAlumnos();
     ResponseEntity<?> createAlumno(UserRequest alumnoRequest,Authentication authentication);
     ResponseEntity<?> updateAlumno(Long id, UserRequest alumnoRequest,Authentication authentication);

@@ -14,7 +14,7 @@ export default function index() {
   const goTo = (site) => {
     router.push(site, undefined, { shallow: true });
   };
-  const [userLogged, setUserLogged] = useState([]);
+  const [userLogged, setUserLogged] = useState({});
 
   const refreshData = async (endpoint, setDataFunc) => {
     return await getData(endpoint, goTo).then((res) => {
@@ -27,13 +27,17 @@ export default function index() {
     refreshData("/currentUser", setUserLogged);
   }, []);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchUserLogged = async () => {
       try {
-        if (userLogged === "administrador") {
-          goTo("/dashboard");
-        } else if (userLogged.deleted) {
-          goTo("/dashboard");
+        const userData = await getData("/currentUser", goTo);
+        if (userData && userData.dto) {
+          setUserLogged(userData.dto);
+          setLoading(false);
+        } else {
+          setUserLogged({});
         }
       } catch (error) {
         console.log(error);
@@ -42,6 +46,16 @@ export default function index() {
 
     fetchUserLogged();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      if (userLogged.tipo !== "administrador") {
+        goTo("/dashboard");
+      } else if (userLogged.deleted) {
+        goTo("/dashboard");
+      }
+    }
+  }, [loading, userLogged]);
 
   const initialValues = {
     nombre: userSelected.length === 0 ? "" : userSelected.profesor.nombre,
