@@ -27,11 +27,9 @@ const patchData = async (
       resetForm();
     })
     .catch((error) => {
-      if (error) {
-        handleOpenSnackBar(error.response.data.message, "error");
-      } else {
-        handleOpenSnackBar(error.response.data.message, "error");
-      }
+      const errorMessage =
+        error.response.data.message || "Se ha producido un error";
+      handleOpenSnackBar(errorMessage, "error");
     });
 };
 

@@ -62,8 +62,6 @@ export default function Curso({
     }
   }, [d.curso.profesor, userType]);
 
-  console.log("dat", d);
-
   useEffect(() => {
     const profesoresData = dataProfesores.map((item) => item.profesor);
     setProfesores(profesoresData);

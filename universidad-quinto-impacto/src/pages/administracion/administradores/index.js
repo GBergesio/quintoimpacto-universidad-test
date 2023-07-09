@@ -7,8 +7,8 @@ import { useState } from "react";
 
 export default function index() {
   const [userSelected, setUserSelected] = useState([]);
-  const uri = "/alumnos/current";
-  const uris = [uri, uri + "/id/" + `${userSelected.alumno?.id}`];
+  const uri = "/administradores/current";
+  const uris = [uri, uri + "/id/" + `${userSelected.administrador?.id}`];
 
   const router = useRouter();
   const goTo = (site) => {
@@ -30,7 +30,7 @@ export default function index() {
   useEffect(() => {
     const fetchUserLogged = async () => {
       try {
-        if (userLogged === "alumnos") {
+        if (userLogged !== "administrador") {
           goTo("/dashboard");
         } else if (userLogged.deleted) {
           goTo("/dashboard");
@@ -39,17 +39,20 @@ export default function index() {
         console.log(error);
       }
     };
-  
+
     fetchUserLogged();
   }, []);
 
   const initialValues = {
-    nombre: userSelected.length === 0 ? "" : userSelected.alumno.nombre,
-    apellido: userSelected.length === 0 ? "" : userSelected.alumno.apellido,
-    dni: userSelected.length === 0 ? "" : userSelected.alumno.dni,
-    celular: userSelected.length === 0 ? "" : userSelected.alumno.celular,
-    email: userSelected.length === 0 ? "" : userSelected.alumno.email,
-    deleted: userSelected.length === 0 ? false : userSelected.alumno.deleted,
+    nombre: userSelected.length === 0 ? "" : userSelected.administrador.nombre,
+    apellido:
+      userSelected.length === 0 ? "" : userSelected.administrador.apellido,
+    dni: userSelected.length === 0 ? "" : userSelected.administrador.dni,
+    celular:
+      userSelected.length === 0 ? "" : userSelected.administrador.celular,
+    email: userSelected.length === 0 ? "" : userSelected.administrador.email,
+    deleted:
+      userSelected.length === 0 ? false : userSelected.administrador.deleted,
   };
 
   return (
@@ -62,12 +65,12 @@ export default function index() {
             initialValues={initialValues}
             isDeleted={
               userSelected.length === 0
-                ? "Deshabilitar Alumno"
-                : userSelected.alumno.deleted
-                ? "El alumno está deshabilitado"
-                : "Deshabilitar Alumno"
+                ? "Deshabilitar Administrador"
+                : userSelected.administrador.deleted
+                ? "El administrador está deshabilitado"
+                : "Deshabilitar Administrador"
             }
-            type={"alumno"}
+            type={"administrador"}
           />
         }
       />

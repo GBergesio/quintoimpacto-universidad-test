@@ -164,6 +164,7 @@ export default function CommonLayout({ componente }) {
                   color="inherit"
                   component={NextLink}
                   href="/administracion/profesores"
+                  disabled={userLogged.deleted}
                 >
                   Ver profesores
                 </Button>
@@ -172,8 +173,18 @@ export default function CommonLayout({ componente }) {
                   color="inherit"
                   component={NextLink}
                   href="/administracion/alumnos"
+                  disabled={userLogged.deleted}
                 >
                   Ver alumnos
+                </Button>
+                <Divider sx={{ my: 1 }} />
+                <Button
+                  color="inherit"
+                  component={NextLink}
+                  href="/administracion/administradores"
+                  disabled={userLogged.deleted}
+                >
+                  Ver administradores
                 </Button>
               </>
             )}
@@ -182,6 +193,7 @@ export default function CommonLayout({ componente }) {
                 color="inherit"
                 component={NextLink}
                 href="/administracion/alumnos"
+                disabled={userLogged.deleted}
               >
                 Ver alumnos
               </Button>

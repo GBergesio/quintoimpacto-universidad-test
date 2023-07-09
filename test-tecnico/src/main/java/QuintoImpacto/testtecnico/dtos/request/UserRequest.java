@@ -15,4 +15,5 @@ public class UserRequest {
     private String celular;
     private String email;
     private String password;
+    private Boolean deleted;
 }

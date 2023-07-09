@@ -15,4 +15,5 @@ public class LoggedUserDTO {
     private String celular;
     private String email;
     private String tipo;
+    private Boolean deleted;
 }

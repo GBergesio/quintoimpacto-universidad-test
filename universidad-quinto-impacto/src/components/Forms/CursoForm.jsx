@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import TurnoSelect from "./TurnoSelect";
 import ProfesorSelect from "./ProfesorSelect";
 import { CursoSchema } from "@/schemas/CursoSchema";
@@ -90,7 +90,7 @@ export default function CursoForm({
               required
               sx={{ mb: 2, mt: 2 }}
               onChange={handleChange}
-              value={values.nombre} // Agrega esta línea
+              value={values.nombre}
               error={touched.nombre && Boolean(errors.nombre)}
               helperText={
                 touched.nombre && Boolean(errors.nombre) ? errors.nombre : " "

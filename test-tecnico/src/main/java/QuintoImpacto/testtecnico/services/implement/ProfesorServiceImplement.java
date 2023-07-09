@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +36,8 @@ public class ProfesorServiceImplement implements ProfesorService {
     AlumnoRepository alumnoRepository;
     @Autowired
     CursoRepository cursoRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Boolean loggedUser(Authentication authentication) {
@@ -77,6 +80,8 @@ public class ProfesorServiceImplement implements ProfesorService {
             return ResponseUtils.badRequestResponse("Celular requerido");
         if (StringUtils.isBlank(profesorRequest.getEmail()))
             return ResponseUtils.badRequestResponse("Email requerido");
+        if (StringUtils.isBlank(profesorRequest.getPassword()))
+            return ResponseUtils.badRequestResponse("Password requerido");
 
         Profesor newProfesor = new Profesor();
         newProfesor.setDni(profesorRequest.getDni());
@@ -84,8 +89,9 @@ public class ProfesorServiceImplement implements ProfesorService {
         newProfesor.setApellido(profesorRequest.getApellido());
         newProfesor.setCelular(profesorRequest.getCelular());
         newProfesor.setEmail(profesorRequest.getEmail());
-        newProfesor.setPassword(profesorRequest.getPassword()); //cambiar con el password encoder
-        newProfesor.setDeleted(false);
+        newProfesor.setPassword(passwordEncoder.encode(profesorRequest.getPassword()));
+        newProfesor.setDeleted(profesorRequest.getDeleted());
+        newProfesor.setTipo("profesor");
         profesorRepository.save(newProfesor);
 
         ProfesorDTO profesorDTO = MapperUtil.convertToDto(newProfesor, ProfesorDTO.class);
@@ -125,8 +131,8 @@ public class ProfesorServiceImplement implements ProfesorService {
         profesor.setApellido(profesorRequest.getApellido());
         profesor.setCelular(profesorRequest.getCelular());
         profesor.setEmail(profesorRequest.getEmail());
-        profesor.setPassword(profesorRequest.getPassword()); //cambiar con el password encoder
-        profesor.setDeleted(false);
+        profesor.setPassword(profesorRequest.getPassword());
+        profesor.setDeleted(profesorRequest.getDeleted());
         profesorRepository.save(profesor);
         ProfesorDTO profesorDTO = MapperUtil.convertToDto(profesor, ProfesorDTO.class);
         return ResponseUtils.updatedResponse(profesorDTO);

@@ -12,4 +12,5 @@ import java.util.List;
 public class AlumnoCursoDTO {
     private AlumnoDTO alumno;
     private List<CursoProfesorDTO> cursos;
+    private String test;
 }

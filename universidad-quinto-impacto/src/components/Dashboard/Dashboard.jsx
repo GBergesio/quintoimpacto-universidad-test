@@ -110,6 +110,8 @@ export default function Dashboard() {
   const [filterValue, setFilterValue] = useState("todos");
 
   let userType = checkTypeUser(userLogged);
+  console.log(userLogged);
+
   const router = useRouter();
 
   //HANDLERS
@@ -149,11 +151,6 @@ export default function Dashboard() {
     router.push(site, undefined, { shallow: true });
   };
 
-  function logout() {
-    goTo("/");
-    cleanToken();
-  }
-
   const refreshData = async (endpoint, setDataFunc) => {
     return await getData(endpoint, goTo).then((res) => {
       setDataFunc(res.dto);
@@ -172,145 +169,151 @@ export default function Dashboard() {
     refreshData("/profesores/current", setProfesoresData);
   }, []);
   return (
-    <Box >
+    <Box>
       <Toolbar />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Grid container alignItems="center" spacing={2} sx={{ mt: 4, mb: 4 }}>
-          <Grid item xs={12} sm={6}>
-            <Input
-              fullWidth
-              placeholder="Buscar curso"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-          </Grid>
-          {userType === "administrador" && (
-            <Grid item xs={12} sm={4}>
-              <EstadoSelect
-                filterValue={filterValue}
-                handleFilterChange={handleFilterChange}
+      {userLogged.deleted ? (
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Typography>Tu usuario se encuentra deshabilitado</Typography>
+        </Container>
+      ) : (
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Grid container alignItems="center" spacing={2} sx={{ mt: 4, mb: 4 }}>
+            <Grid item xs={12} sm={6}>
+              <Input
+                fullWidth
+                placeholder="Buscar curso"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
             </Grid>
-          )}
-          {userType === "administrador" && (
-            <Grid item xs={12} sm={2}>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={() => {
-                  handleOpenCursoForm("create");
-                }}
-                sx={{ backgroundColor: "#4052da" }}
-              >
-                Agregar curso
-              </Button>
-            </Grid>
-          )}
-        </Grid>{" "}
-        <Grid container spacing={3}>
-          {dataCursos
-            .filter((item) =>
-              item.curso.nombre
-                ?.toLowerCase()
-                .includes(searchValue.toLowerCase())
-            )
-            .filter((item) =>
-              userType === "alumno" ? !item.curso.deleted : true
-            )
-            .filter((item) =>
-              userType === "profesor"
-                ? item.curso.profesor &&
-                  item.curso.profesor.id === userLogged.id
-                : true
-            )
-            .filter((item) =>
-              filterValue === "habilitados"
-                ? !item.curso.deleted
-                : filterValue === "deshabilitados"
-                ? item.curso.deleted
-                : true
-            )
-            .map((item, index) => (
-              <Grid item key={index} xs={12} md={8} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 350,
+            {userType === "administrador" && (
+              <Grid item xs={12} sm={4}>
+                <EstadoSelect
+                  filterValue={filterValue}
+                  handleFilterChange={handleFilterChange}
+                />
+              </Grid>
+            )}
+            {userType === "administrador" && (
+              <Grid item xs={12} sm={2}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() => {
+                    handleOpenCursoForm("create");
                   }}
+                  sx={{ backgroundColor: "#4052da" }}
                 >
-                  <Curso
-                    d={item}
-                    userType={userType}
-                    userLogged={userLogged}
-                    releaseProfesor={releaseProfesor}
-                    dataProfesores={dataProfesores}
-                    refreshData={refreshData}
-                    setData={setDataCursos}
-                    handleOpenSnackBar={handleOpenSnackBar}
-                    setCursoSelected={setCursoSelected}
-                    handleOpenCursoForm={handleOpenCursoForm}
-                    setBody={setBody}
-                  />
+                  Agregar curso
+                </Button>
+              </Grid>
+            )}
+          </Grid>{" "}
+          <Grid container spacing={3}>
+            {dataCursos
+              .filter((item) =>
+                item.curso.nombre
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase())
+              )
+              .filter((item) =>
+                userType === "alumno" ? !item.curso.deleted : true
+              )
+              .filter((item) =>
+                userType === "profesor"
+                  ? item.curso.profesor &&
+                    item.curso.profesor.id === userLogged.id
+                  : true
+              )
+              .filter((item) =>
+                filterValue === "habilitados"
+                  ? !item.curso.deleted
+                  : filterValue === "deshabilitados"
+                  ? item.curso.deleted
+                  : true
+              )
+              .map((item, index) => (
+                <Grid item key={index} xs={12} md={8} lg={3}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: 350,
+                    }}
+                  >
+                    <Curso
+                      d={item}
+                      userType={userType}
+                      userLogged={userLogged}
+                      releaseProfesor={releaseProfesor}
+                      dataProfesores={dataProfesores}
+                      refreshData={refreshData}
+                      setData={setDataCursos}
+                      handleOpenSnackBar={handleOpenSnackBar}
+                      setCursoSelected={setCursoSelected}
+                      handleOpenCursoForm={handleOpenCursoForm}
+                      setBody={setBody}
+                    />
+                  </Paper>
+                </Grid>
+              ))}
+            {dataCursos
+              .filter((item) =>
+                item.curso.nombre
+                  ?.toLowerCase()
+                  .includes(searchValue.toLowerCase())
+              )
+              .filter((item) =>
+                userType === "alumno" ? !item.curso.deleted : true
+              )
+              .filter((item) =>
+                userType === "profesor"
+                  ? item.curso.profesor &&
+                    item.curso.profesor.id === userLogged.id
+                  : true
+              )
+              .filter((item) =>
+                filterValue === "habilitados"
+                  ? !item.curso.deleted
+                  : filterValue === "deshabilitados"
+                  ? item.curso.deleted
+                  : true
+              ).length === 0 && (
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <Typography variant="body1">
+                    No se encontraron cursos disponibles.
+                  </Typography>
                 </Paper>
               </Grid>
-            ))}
-          {dataCursos
-            .filter((item) =>
-              item.curso.nombre
-                ?.toLowerCase()
-                .includes(searchValue.toLowerCase())
-            )
-            .filter((item) =>
-              userType === "alumno" ? !item.curso.deleted : true
-            )
-            .filter((item) =>
-              userType === "profesor"
-                ? item.curso.profesor &&
-                  item.curso.profesor.id === userLogged.id
-                : true
-            )
-            .filter((item) =>
-              filterValue === "habilitados"
-                ? !item.curso.deleted
-                : filterValue === "deshabilitados"
-                ? item.curso.deleted
-                : true
-            ).length === 0 && (
-            <Grid item xs={12}>
-              <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                <Typography variant="body1">
-                  No se encontraron cursos disponibles.
-                </Typography>
-              </Paper>
-            </Grid>
-          )}
-        </Grid>
-        <Copyright sx={{ pt: 4 }} />
-        <UtilSnackBar
-          open={openSnack}
-          handleCloseSnackBar={handleCloseSnackBar}
-          severity={severity}
-          body={bodySnack}
-        />
-        <SimpleDialog
-          open={openCursoForm}
-          close={handleCloseCursoForm}
-          titulo={body === "create" ? "Crear curso" : "Editar curso"}
-          form={
-            <CursoForm
-              cSelected={cursoSelected}
-              dataProfesores={dataProfesores}
-              refreshData={refreshData}
-              handleOpenSnackBar={handleOpenSnackBar}
-              handleClose={handleCloseCursoForm}
-              setData={setDataCursos}
-              body={body}
-            />
-          }
-        />
-      </Container>
+            )}
+          </Grid>
+          <Copyright sx={{ pt: 4 }} />
+          <UtilSnackBar
+            open={openSnack}
+            handleCloseSnackBar={handleCloseSnackBar}
+            severity={severity}
+            body={bodySnack}
+          />
+          <SimpleDialog
+            open={openCursoForm}
+            close={handleCloseCursoForm}
+            titulo={body === "create" ? "Crear curso" : "Editar curso"}
+            form={
+              <CursoForm
+                cSelected={cursoSelected}
+                dataProfesores={dataProfesores}
+                refreshData={refreshData}
+                handleOpenSnackBar={handleOpenSnackBar}
+                handleClose={handleCloseCursoForm}
+                setData={setDataCursos}
+                body={body}
+              />
+            }
+          />
+        </Container>
+      )}
     </Box>
   );
 }

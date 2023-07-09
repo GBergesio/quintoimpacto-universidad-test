@@ -28,4 +28,5 @@ public class Administrador {
 
     @Column(name = "tipo_usuario", columnDefinition = "VARCHAR(255) DEFAULT 'administrador'")
     private String tipo;
+
 }

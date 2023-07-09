@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public class AlumnoServiceImplement implements AlumnoService {
     ProfesorRepository profesorRepository;
     @Autowired
     CursoRepository cursoRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Boolean loggedUser(Authentication authentication) {
@@ -52,11 +55,11 @@ public class AlumnoServiceImplement implements AlumnoService {
 
     @Override
     public ResponseEntity<?> createAlumno(UserRequest alumnoRequest,Authentication authentication) {
-        Boolean isAdminActive = loggedUser(authentication);
-
-        if (!isAdminActive){
-            return ResponseUtils.forbiddenResponse();
-        }
+//        Boolean isAdminActive = loggedUser(authentication);
+//
+//        if (!isAdminActive){
+//            return ResponseUtils.forbiddenResponse();
+//        }
         List<Alumno> alumnos = alumnoRepository.findAll();
 
         Boolean alumnosExist = alumnos.stream().anyMatch(a -> a.getDni().equals(alumnoRequest.getDni()));
@@ -73,6 +76,8 @@ public class AlumnoServiceImplement implements AlumnoService {
             return ResponseUtils.badRequestResponse("Celular requerido");
         if (StringUtils.isBlank(alumnoRequest.getEmail()))
             return ResponseUtils.badRequestResponse("Email requerido");
+        if (StringUtils.isBlank(alumnoRequest.getPassword()))
+            return ResponseUtils.badRequestResponse("Password requerido");
 
         Alumno newAlumno = new Alumno();
         newAlumno.setDni(alumnoRequest.getDni());
@@ -80,8 +85,10 @@ public class AlumnoServiceImplement implements AlumnoService {
         newAlumno.setApellido(alumnoRequest.getApellido());
         newAlumno.setCelular(alumnoRequest.getCelular());
         newAlumno.setEmail(alumnoRequest.getEmail());
-        newAlumno.setPassword(alumnoRequest.getPassword()); //cambiar con el password encoder
-        newAlumno.setDeleted(false);
+        newAlumno.setDeleted(alumnoRequest.getDeleted());
+        newAlumno.setPassword(passwordEncoder.encode(alumnoRequest.getPassword()));
+        newAlumno.setDeleted(alumnoRequest.getDeleted());
+        newAlumno.setTipo("alumno");
         alumnoRepository.save(newAlumno);
 
         AlumnoDTO newAlumnoDTO = MapperUtil.convertToDto(newAlumno, AlumnoDTO.class);
@@ -122,7 +129,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         alumno.setApellido(alumnoRequest.getApellido());
         alumno.setCelular(alumnoRequest.getCelular());
         alumno.setEmail(alumnoRequest.getEmail());
-        alumno.setPassword(alumnoRequest.getPassword()); //cambiar con el password encoder
+        alumno.setDeleted(alumnoRequest.getDeleted());
         alumnoRepository.save(alumno);
 
         AlumnoDTO newAlumnoDTO = MapperUtil.convertToDto(alumno, AlumnoDTO.class);

@@ -2,6 +2,7 @@ package QuintoImpacto.testtecnico.services.implement;
 
 import QuintoImpacto.testtecnico.dtos.AdministradorDTO;
 import QuintoImpacto.testtecnico.dtos.LoggedUserDTO;
+import QuintoImpacto.testtecnico.dtos.combinacion.AdmiDTO;
 import QuintoImpacto.testtecnico.dtos.request.UserRequest;
 import QuintoImpacto.testtecnico.models.Administrador;
 import QuintoImpacto.testtecnico.repositories.AdministradorRepository;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,8 @@ public class AdministradorServiceImplement implements AdministradorService {
     ProfesorRepository profesorRepository;
     @Autowired
     AlumnoRepository alumnoRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Override
     public Boolean isAdmin(Authentication authentication) {
@@ -57,7 +61,7 @@ public class AdministradorServiceImplement implements AdministradorService {
         }
 
         List<Administrador> administradores = administradorRepository.findAll();
-        List<AdministradorDTO> administradorDTOS = MapperUtil.convertToDtoList(administradores, AdministradorDTO.class);
+        List<AdmiDTO> administradorDTOS = MapperUtil.convertToDtoList(administradores, AdmiDTO.class);
         return ResponseUtils.dataResponse(administradorDTOS, null);
     }
 
@@ -86,6 +90,8 @@ public class AdministradorServiceImplement implements AdministradorService {
             return ResponseUtils.badRequestResponse("Celular requerido");
         if (StringUtils.isBlank(adminRequest.getEmail()))
             return ResponseUtils.badRequestResponse("Email requerido");
+        if (StringUtils.isBlank(adminRequest.getPassword()))
+            return ResponseUtils.badRequestResponse("Password requerido");
 
         Administrador newAdmin = new Administrador();
         newAdmin.setDni(adminRequest.getDni());
@@ -93,8 +99,9 @@ public class AdministradorServiceImplement implements AdministradorService {
         newAdmin.setApellido(adminRequest.getApellido());
         newAdmin.setCelular(adminRequest.getCelular());
         newAdmin.setEmail(adminRequest.getEmail());
-        newAdmin.setPassword(adminRequest.getPassword()); //cambiar con el password encoder
-        newAdmin.setDeleted(false);
+        newAdmin.setPassword(passwordEncoder.encode(adminRequest.getPassword()));
+        newAdmin.setDeleted(adminRequest.getDeleted());
+        newAdmin.setTipo("administrador");
         administradorRepository.save(newAdmin);
 
         AdministradorDTO administradorDTO = MapperUtil.convertToDto(newAdmin, AdministradorDTO.class);
@@ -136,7 +143,8 @@ public class AdministradorServiceImplement implements AdministradorService {
         administrador.setApellido(adminRequest.getApellido());
         administrador.setCelular(adminRequest.getCelular());
         administrador.setEmail(adminRequest.getEmail());
-        administrador.setPassword(adminRequest.getPassword()); //cambiar con el password encoder
+        administrador.setDeleted(adminRequest.getDeleted());
+
         administradorRepository.save(administrador);
 
         AdministradorDTO administradorDTO = MapperUtil.convertToDto(administrador, AdministradorDTO.class);
