@@ -1,6 +1,6 @@
 import CommonUsuarioForm from "@/components/Forms/CommonUsuarioForm";
 import UtilSnackBar from "@/components/Snackbar";
-import { AppBar, Avatar, Box, Grid, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, Button, Grid, Toolbar, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { Link as NextLink } from "next/link";
 import React, { useState } from "react";
@@ -48,16 +48,17 @@ export default function index() {
     <>
       <AppBar position="static" sx={{ backgroundColor: "#4052da" }}>
         <Toolbar>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              alt="Logo Universidad XYZ"
-              src="/images/logo.png"
-              sx={{ marginRight: "1rem" }}
-            />
-            <Typography variant="h6" component={NextLink} to="/">
-              Universidad Quinto Impacto
-            </Typography>
-          </Box>
+          <Avatar
+            alt="Logo Universidad XYZ"
+            src="/images/logo.png"
+            sx={{ marginRight: "1rem" }}
+          />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Universidad Quinto Impacto
+          </Typography>
+          <Button color="inherit" component={NextLink} href="/login">
+            Login
+          </Button>
         </Toolbar>
       </AppBar>
       <Grid container justifyContent="center" alignItems="center" spacing={2}>

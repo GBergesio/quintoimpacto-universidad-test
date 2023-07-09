@@ -284,7 +284,15 @@ const CommonUserTable = ({
                         color="primary"
                         onClick={() => handleOpenDialog(u)}
                       >
-                        <CursoView />
+                        {type === "alumno" ? (
+                          <CursoView />
+                        ) : type === "profesor" ? (
+                          <CursoView />
+                        ) : type === "administrador" ? (
+                          ""
+                        ) : (
+                          ""
+                        )}
                       </IconButton>
                       <IconButton
                         color="primary"
@@ -293,7 +301,7 @@ const CommonUserTable = ({
                         <EditIcon />
                       </IconButton>
                       {u[type].deleted ? (
-                        <Tooltip title="Alumno deshabilitado">
+                        <Tooltip title="Deshabilitado">
                           <IconButton color="warning">
                             <Warning fontSize="small" />
                           </IconButton>
@@ -323,7 +331,10 @@ const CommonUserTable = ({
         </Table>
       </TableContainer>
       <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Cursos del alumno</DialogTitle>
+        <DialogTitle>
+          Cursos del{" "}
+          {type === "alumno" ? "Alumno" : type === "profesor" ? "Profesor" : ""}
+        </DialogTitle>
         <DialogContent>
           {selectedUser && selectedUser.cursos.length > 0 ? (
             <TableContainer>
@@ -332,7 +343,15 @@ const CommonUserTable = ({
                   <TableRow>
                     <TableCell>Nombre del Curso</TableCell>
                     <TableCell>Turno</TableCell>
-                    <TableCell>Profesor</TableCell>
+                    {type === "alumno" ? (
+                      <TableCell>Profesor</TableCell>
+                    ) : type === "profesor" ? (
+                      ""
+                    ) : type === "administrador" ? (
+                      ""
+                    ) : (
+                      ""
+                    )}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -340,18 +359,26 @@ const CommonUserTable = ({
                     <TableRow key={curso.id}>
                       <TableCell>{curso.nombre}</TableCell>
                       <TableCell>{curso.turno}</TableCell>
-                      <TableCell>
-                        {curso.profesor
-                          ? `${curso.profesor.nombre} ${curso.profesor.apellido}`
-                          : "-"}
-                      </TableCell>
+                      {type === "alumno" ? (
+                        <TableCell>
+                          {curso.profesor
+                            ? `${curso.profesor.nombre} ${curso.profesor.apellido}`
+                            : "-"}
+                        </TableCell>
+                      ) : type === "profesor" ? (
+                        ""
+                      ) : type === "administrador" ? (
+                        ""
+                      ) : (
+                        ""
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
           ) : (
-            <Typography>No se encontraron cursos para este alumno.</Typography>
+            <Typography>No se encontraron cursos asignados</Typography>
           )}
         </DialogContent>
         <DialogActions>

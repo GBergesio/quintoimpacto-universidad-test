@@ -5,7 +5,6 @@ import {
   Grid,
   Box,
   FormControl,
-  InputLabel,
   AppBar,
   Toolbar,
   Avatar,
@@ -17,6 +16,7 @@ import { Formik } from "formik";
 import { LoginSchema } from "@/schemas/LoginSchema";
 import UtilSnackBar from "../Snackbar";
 import apiUrl from "@/utils/apiUrl";
+import { Link as NextLink } from "next/link";
 
 const LoginForm = () => {
   const router = useRouter();
@@ -80,16 +80,17 @@ const LoginForm = () => {
     <>
       <AppBar position="static" sx={{ backgroundColor: "#4052da" }}>
         <Toolbar>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Avatar
-              alt="Logo Universidad XYZ"
-              src="/images/logo.png"
-              sx={{ marginRight: "1rem" }}
-            />
-            <Typography variant="h6" component="div">
-              Universidad Quinto Impacto
-            </Typography>
-          </Box>
+          <Avatar
+            alt="Logo Universidad XYZ"
+            src="/images/logo.png"
+            sx={{ marginRight: "1rem" }}
+          />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Universidad Quinto Impacto
+          </Typography>
+          <Button color="inherit" component={NextLink} href="/registro">
+            Registrarse como alumno
+          </Button>
         </Toolbar>
       </AppBar>
       <Grid container justifyContent="center" alignItems="center" spacing={2}>
