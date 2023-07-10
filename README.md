@@ -1,9 +1,7 @@
-# Click en la imagen para ver video demo
+# TEST Backend
 
 [![TEST - Video demo aplicacion](https://serving.photos.photobox.com/7677933546bf6b90f036549c12521a0bd6143aea59403a5ed2eb5efaae23493eb86665e7.jpg)](https://clipchamp.com/watch/moZA2T9DUAG)
-
-## UTILIZAR BRANCH DEVELOP
-En la branch develop se encuentra la versión mas actual del frontend y backend
+- *Click en la imagen para ver el video demo**
 
 ## Tecnologías Utilizadas
 
@@ -32,3 +30,7 @@ El frontend de esta aplicación se desarrolló utilizando las siguientes tecnolo
 - **Axios:** Utilizamos Axios para realizar solicitudes HTTP desde el cliente al servidor.
 - **Yup:** Utilizamos Yup para realizar validaciones de formularios en el cliente.
 -  **Formik:** Utilizamos Formik como biblioteca de manejo de formularios en React.
+
+### POSTMAN
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/21066812-c93cbaad-0faf-4855-8ec2-77c858652449?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D21066812-c93cbaad-0faf-4855-8ec2-77c858652449%26entityType%3Dcollection%26workspaceId%3D3cba515e-8aa6-4d18-80a0-df37b0e17f5e)
