@@ -2,10 +2,10 @@
 
 [![TEST - Video demo aplicacion](https://serving.photos.photobox.com/7677933546bf6b90f036549c12521a0bd6143aea59403a5ed2eb5efaae23493eb86665e7.jpg)](https://clipchamp.com/watch/moZA2T9DUAG)
 
-## Tecnologías Utilizadas
-
 ## UTILIZAR BRANCH DEVELOP
 En la branch develop se encuentra la versión mas actual del frontend y backend
+
+## Tecnologías Utilizadas
 
 ### Backend
 
