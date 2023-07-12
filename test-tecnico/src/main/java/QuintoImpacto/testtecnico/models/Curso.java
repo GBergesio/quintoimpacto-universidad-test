@@ -38,3 +38,6 @@ public class Curso {
     private List<Alumno> alumnos;
 
 }
+// La relación @ManyToOne con Profesor indica que un curso pertenece a un único profesor y el profesor puede estar asociado a varios cursos.
+// La relación @ManyToMany con Alumno indica que un curso puede tener varios alumnos asociados y un alumno puede estar inscrito en varios cursos.
+// La relación se gestiona mediante una tabla de unión llamada curso_alumno, donde se almacenan las asociaciones entre los cursos y los alumnos.

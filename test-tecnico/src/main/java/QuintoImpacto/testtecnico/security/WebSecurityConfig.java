@@ -54,3 +54,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         });
     }
 }
+
+// Este método configura la seguridad de Spring para permitir el acceso sin autenticación a rutas específicas,
+// requerir autenticación para otras rutas, definir el punto de entrada para manejar las excepciones de autenticación no autorizada
+// y configurar el filtro JwtRequestFilter para validar los tokens en cada solicitud.
+// También se habilita la configuración CORS para permitir solicitudes desde cualquier origen, método y encabezado.

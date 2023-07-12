@@ -34,6 +34,7 @@ public class CursoServiceImplement implements CursoService {
     @Autowired
     ProfesorRepository profesorRepository;
 
+    //Verifica si el usuario autenticado es un administrador.
     @Override
     public Boolean isAdmin(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
@@ -42,14 +43,15 @@ public class CursoServiceImplement implements CursoService {
         }
         return false;
     }
-
+    // Metodo que devuelve todos los cursos - se puede hacer otro para que devuelva todos y este modificarlo para que devuelva solo los deleted == false
     @Override
     public ResponseEntity<?> getAllCursos() {
         List<Curso> cursos = cursoRepository.findAll();
         List<CursoProfesorAlumnosDTO> cursosDTOS = MapperUtil.convertToDtoList(cursos, CursoProfesorAlumnosDTO.class);
         return ResponseUtils.dataResponse(cursosDTOS, null);
     }
-
+    // Metodo para crear un curso
+    // El segundo parametro de autenticacion es para restringir que solo los administradores puedan crear a traves del booleano isAdminActive.
     @Override
     public ResponseEntity<?> createCurso(CursoRequest cursoRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -85,7 +87,7 @@ public class CursoServiceImplement implements CursoService {
 
         return ResponseUtils.createdResponse(newCursoDTO);
     }
-
+    //Metodo para modificar un curso, tiene en cuenta mismas consideraciones que el metodo de crear
     @Override
     public ResponseEntity<?> updateCurso(Long id, CursoRequest cursoRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -125,6 +127,8 @@ public class CursoServiceImplement implements CursoService {
         return ResponseUtils.updatedResponse(cursoDTO);
     }
 
+    // Borrado logico del curso, solo se desactiva. Para eliminar un curso del repositorio podriamos hacer un .delete()
+    // pero previo deberiamos ver la relacion que tiene con los profesores y alumnos
     @Override
     public ResponseEntity<?> deleteCurso(Long id,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -140,7 +144,8 @@ public class CursoServiceImplement implements CursoService {
 
         return ResponseUtils.activeDesactiveResponse(!curso.getDeleted());
     }
-        @Override
+    //Metodo para setear un alumno en un curso. BUsca por id al alumno y al curso y lo setea.
+    @Override
     public ResponseEntity<?> setCursoAlumno(CursoAlumnoRequest request, Authentication authentication) {
 //        Boolean isAdminActive = isAdmin(authentication);
 //        if (!isAdminActive){

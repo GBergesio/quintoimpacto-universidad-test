@@ -67,3 +67,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 }
+
+
+// El metodo JwtRequestFilter actúa como un filtro que intercepta las solicitudes entrantes y verifica la presencia y validez del token JWT en el encabezado de autorización.
+// Si el token es válido, configura manualmente la autenticación en Spring Security.
+// Esto permite proteger los recursos y garantizar que solo los usuarios autenticados y autorizados puedan acceder a ellos.

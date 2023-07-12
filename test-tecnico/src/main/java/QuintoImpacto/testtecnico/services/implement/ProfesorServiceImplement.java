@@ -39,6 +39,7 @@ public class ProfesorServiceImplement implements ProfesorService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    //Devuelve el usuario logueado (Tanto Alumno, Profesor o Administrador) Lo deje en este service pero podria haber ido en uno generico para los 3
     @Override
     public Boolean loggedUser(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
@@ -47,7 +48,7 @@ public class ProfesorServiceImplement implements ProfesorService {
         }
         return false;
     }
-
+    //Verifica que no se repita el email en ninguno de los repositorios, para que exista un solo usuario con ese email
     @Override
     public Boolean emailExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
@@ -57,7 +58,7 @@ public class ProfesorServiceImplement implements ProfesorService {
         }
         return false;
     }
-
+    //Verifica que no se repita el dni en ninguno de los repositorios, para que exista un solo usuario con ese dni
     @Override
     public Boolean dniExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByDni(alumnoRequest.getDni())
@@ -67,14 +68,15 @@ public class ProfesorServiceImplement implements ProfesorService {
         }
         return false;
     }
-
+    // Metodo que devuelve todos los profesores - se puede hacer otro para que devuelva todos y este modificarlo para que devuelva solo los deleted == false
     @Override
     public ResponseEntity<?> getAllProfesores() {
         List<Profesor> profesores = profesorRepository.findAll(); // Obtén la lista de profesores desde alguna fuente de datos
         List<ProfesorCursosDTO> profesorDTOS = MapperUtil.convertToDtoList(profesores, ProfesorCursosDTO.class);
         return ResponseUtils.dataResponse(profesorDTOS, null);
     }
-
+    // Metodo para crear un profesor, utiliza el request generico para los 3 tipos de usuarios (ya que en este caso los 3 comparten los mismos atributos)
+    // y el segundo parametro de autenticacion es para restringir que solo los administradores puedan crear a traves del booleano isAdminActive.
     @Override
     public ResponseEntity<?> createProfesor(UserRequest profesorRequest,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -127,7 +129,7 @@ public class ProfesorServiceImplement implements ProfesorService {
         ProfesorDTO profesorDTO = MapperUtil.convertToDto(newProfesor, ProfesorDTO.class);
         return ResponseUtils.createdResponse(profesorDTO);
     }
-
+    //Metodo para modificar un admin, tiene en cuenta mismas consideraciones que el metodo de crear
     @Override
     public ResponseEntity<?> updateProfesor(Long id, UserRequest profesorRequest,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -181,7 +183,9 @@ public class ProfesorServiceImplement implements ProfesorService {
         ProfesorDTO profesorDTO = MapperUtil.convertToDto(profesor, ProfesorDTO.class);
         return ResponseUtils.updatedResponse(profesorDTO);
     }
-
+    // Borrado logico del profesor, solo se desactiva.
+    // Si se quisiera eliminar completamente deberiamos chequear que el profesor no este relacionado con un curso primero.
+    // Se podria hacer un condicional viendo el tamanio de profesor.getCursos y si es mayor a 0 eliminar la relacion entre los cursos y el profesor y luego si eliminar el profesor de la bdd
     @Override
     public ResponseEntity<?> deleteProfesor(Long id,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -197,7 +201,7 @@ public class ProfesorServiceImplement implements ProfesorService {
 
         return ResponseUtils.activeDesactiveResponse(!profesor.getDeleted());
     }
-
+    // Metodo para eliminar el profesor de un curso, recibe el id del curso como parametro, se busca en el repo, si existe se setea en null
     @Override
     public ResponseEntity<?> releaseCurso(Long idCurso,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -217,6 +221,7 @@ public class ProfesorServiceImplement implements ProfesorService {
         return ResponseUtils.updatedResponse(null);
     }
 
+    // Metodo para setear un profesor a un curso. Buscamos en el repositorio tanto al profe como al curso, si existen se setea y se genera la relacion.
     @Override
     public ResponseEntity<?> setCursoProfesor(CursoProfesorRequest cursoProfesorRequest, Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);

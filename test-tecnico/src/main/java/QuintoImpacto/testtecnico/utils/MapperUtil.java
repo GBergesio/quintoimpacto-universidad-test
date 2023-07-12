@@ -18,3 +18,6 @@ public class MapperUtil {
                 .collect(Collectors.toList());
     }
 }
+
+// La clase MapperUtil proporciona métodos estáticos para facilitar la conversión entre entidades y DTOs utilizando ModelMapper.
+// Esto es útil para evitar escribir manualmente el código de mapeo repetitivo y simplificar el proceso de transformación de datos entre diferentes capas de la aplicación.

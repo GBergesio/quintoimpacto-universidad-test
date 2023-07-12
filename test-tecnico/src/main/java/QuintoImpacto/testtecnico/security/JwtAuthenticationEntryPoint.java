@@ -21,3 +21,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Se
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
     }
 }
+
+// El método commence simplemente establece el código de estado de la respuesta como 401 - No autorizado y envía el mensaje "Unauthorized" como respuesta.
+// Esto indica al cliente que la solicitud no está autorizada y no se puede acceder al recurso solicitado.

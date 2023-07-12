@@ -38,3 +38,7 @@ public class Alumno {
     private List<Curso> cursos;
 
 }
+
+// Con la relación @ManyToMany entre Alumno y Curso indicamos que un alumno puede tener varios cursos asociados y un curso puede tener varios alumnos asociados.
+// La anotación @ManyToMany se coloca en una de las entidades y se configura con mappedBy para indicar cómo se establece el mapeo desde el otro lado de la relación.
+// Esto nos permite acceder a los cursos asociados a un alumno a través de la propiedad cursos en la clase Alumno.

@@ -32,6 +32,7 @@ public class AdministradorServiceImplement implements AdministradorService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    //Verifica si el usuario autenticado es un administrador.
     @Override
     public Boolean isAdmin(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
@@ -40,7 +41,7 @@ public class AdministradorServiceImplement implements AdministradorService {
         }
         return false;
     }
-
+    //Verifica que no se repita el email en ninguno de los repositorios, para que exista un solo usuario con ese email
     @Override
     public Boolean emailExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
@@ -50,7 +51,7 @@ public class AdministradorServiceImplement implements AdministradorService {
         }
         return false;
     }
-
+    //Verifica que no se repita el dni en ninguno de los repositorios, para que exista un solo usuario con ese dni
     @Override
     public Boolean dniExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByDni(alumnoRequest.getDni())
@@ -60,7 +61,7 @@ public class AdministradorServiceImplement implements AdministradorService {
         }
         return false;
     }
-
+    //Devuelve el usuario logueado (Tanto Alumno, Profesor o Administrador) Lo deje en este service pero podria haber ido en uno generico para los 3
     @Override
     public ResponseEntity<?> loggedUser(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
@@ -71,7 +72,7 @@ public class AdministradorServiceImplement implements AdministradorService {
             return ResponseUtils.dataResponse(loggedUserr,null);
         }
     }
-
+    // Metodo que devuelve todos los administradores - se puede hacer otro para que devuelva todos y este modificarlo para que devuelva solo los deleted == false
     @Override
     public ResponseEntity<?> getAllAdmin(Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -84,7 +85,8 @@ public class AdministradorServiceImplement implements AdministradorService {
         List<AdmiDTO> administradorDTOS = MapperUtil.convertToDtoList(administradores, AdmiDTO.class);
         return ResponseUtils.dataResponse(administradorDTOS, null);
     }
-
+    // Metodo para crear un admin, utiliza el request generico para los 3 tipos de usuarios (ya que en este caso los 3 comparten los mismos atributos)
+    // y el segundo parametro de autenticacion es para restringir que solo los administradores puedan crear a traves del booleano isAdminActive.
     @Override
     public ResponseEntity<?> createAdmin(UserRequest adminRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -138,7 +140,7 @@ public class AdministradorServiceImplement implements AdministradorService {
 
         return ResponseUtils.createdResponse(administradorDTO);
     }
-
+    //Metodo para modificar un admin, tiene en cuenta mismas consideraciones que el metodo de crear
     @Override
     public ResponseEntity<?> updateAdmin(Long id, UserRequest adminRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -191,7 +193,8 @@ public class AdministradorServiceImplement implements AdministradorService {
         AdministradorDTO administradorDTO = MapperUtil.convertToDto(administrador, AdministradorDTO.class);
         return ResponseUtils.updatedResponse(administradorDTO);
     }
-
+    // Borrado logico del administrador, solo se desactiva. Para eliminar un admin del repositorio podriamos hacer un .delete()
+    // y no habria mayores riesgos ya que no tiene relacion con otras entidades.
     @Override
     public ResponseEntity<?> deleteAdmin(Long id, Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);

@@ -38,6 +38,7 @@ public class AlumnoServiceImplement implements AlumnoService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    //Verifica si el usuario autenticado es un administrador. Tiene otro nombre a diferencia del de profe y admin...
     @Override
     public Boolean loggedUser(Authentication authentication) {
         Object loggedUser = UserUtils.getLoggedUser(authentication, administradorRepository, profesorRepository, alumnoRepository);
@@ -46,7 +47,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         }
         return false;
     }
-
+    //Verifica que no se repita el email en ninguno de los repositorios, para que exista un solo usuario con ese email
     @Override
     public Boolean emailExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByEmail(alumnoRequest.getEmail())
@@ -56,7 +57,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         }
         return false;
     }
-
+    //Verifica que no se repita el dni en ninguno de los repositorios, para que exista un solo usuario con ese dni
     @Override
     public Boolean dniExist(UserRequest alumnoRequest) {
         if (alumnoRepository.existsByDni(alumnoRequest.getDni())
@@ -66,7 +67,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         }
         return false;
     }
-
+    // Metodo que devuelve todos los alumnos - se puede hacer otro para que devuelva todos y este modificarlo para que devuelva solo los deleted == false
     @Override
     public ResponseEntity<?> getAllAlumnos() {
         List<Alumno> alumnos = alumnoRepository.findAll();
@@ -74,6 +75,8 @@ public class AlumnoServiceImplement implements AlumnoService {
         return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
 
+    // Metodo para crear un alumno, utiliza el request generico para los 3 tipos de usuarios (ya que en este caso los 3 comparten los mismos atributos)
+    // En este caso se puede crear estando logueado como no. administradores pueden crear y persona que se registre como alumno.
     @Override
     public ResponseEntity<?> createAlumno(UserRequest alumnoRequest,Authentication authentication) {
 
@@ -121,7 +124,7 @@ public class AlumnoServiceImplement implements AlumnoService {
 
         return ResponseUtils.createdResponse(newAlumnoDTO);
     }
-
+    //Metodo para modificar un profesor, tiene en cuenta mismas consideraciones que el metodo de crear, solo pueden hacer update los admin
     @Override
     public ResponseEntity<?> updateAlumno(Long id,UserRequest alumnoRequest,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -172,7 +175,8 @@ public class AlumnoServiceImplement implements AlumnoService {
         AlumnoDTO newAlumnoDTO = MapperUtil.convertToDto(alumno, AlumnoDTO.class);
         return ResponseUtils.updatedResponse(newAlumnoDTO);
     }
-
+    // Borrado logico del alumno, solo se desactiva. Para eliminar un admin del repositorio podriamos hacer un .delete() pero deberiamos
+    // ver las relaciones que existan entre ese alumno y cursos. Se deberian eliminar primero y posterior si eliminarlo completamente
     @Override
     public ResponseEntity<?> deleteAlumno(Long id,Authentication authentication) {
         Boolean isAdminActive = loggedUser(authentication);
@@ -188,7 +192,7 @@ public class AlumnoServiceImplement implements AlumnoService {
 
         return ResponseUtils.activeDesactiveResponse(!alumno.getDeleted());
     }
-
+    // Metodo para encontrar alumnos segun una letra o palabra del curso. Por ej Biologia
     @Override
     public ResponseEntity<?> findAlumnosByLetraCurso(String letra) {
         List<Alumno> alumnos = null;
@@ -196,7 +200,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
         return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
-
+    // Metodo para traer alumnos segun id de curso.
     @Override
     public ResponseEntity<?> findByCurso(Long id) {
         List<Alumno> alumnos = null;
@@ -211,7 +215,7 @@ public class AlumnoServiceImplement implements AlumnoService {
         List<AlumnoDTO> alumnoDTOS = MapperUtil.convertToDtoList(alumnos, AlumnoDTO.class);
         return ResponseUtils.dataResponse(alumnoDTOS, null);
     }
-
+    // Metodo para traer alumnos segun nombre del alumno.
     @Override
     public ResponseEntity<?> findByNombre(String nombre) {
         List<Alumno> alumnos = null;
