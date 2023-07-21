@@ -6,9 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 public interface ProfesorService {
-    Boolean loggedUser(Authentication authentication);
-    Boolean emailExist(UserRequest alumnoRequest);
-    Boolean dniExist(UserRequest alumnoRequest);
     ResponseEntity<?> getAllProfesores();
     ResponseEntity<?> createProfesor(UserRequest profesorRequest,Authentication authentication);
     ResponseEntity<?> updateProfesor(Long id, UserRequest profesorRequest,Authentication authentication);

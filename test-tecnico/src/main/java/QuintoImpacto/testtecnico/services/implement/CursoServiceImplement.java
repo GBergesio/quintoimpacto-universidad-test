@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -26,7 +27,6 @@ public class CursoServiceImplement implements CursoService {
 
     @Autowired
     CursoRepository cursoRepository;
-
     @Autowired
     AlumnoRepository alumnoRepository;
     @Autowired
@@ -52,6 +52,7 @@ public class CursoServiceImplement implements CursoService {
     }
     // Metodo para crear un curso
     // El segundo parametro de autenticacion es para restringir que solo los administradores puedan crear a traves del booleano isAdminActive.
+    @Transactional
     @Override
     public ResponseEntity<?> createCurso(CursoRequest cursoRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -88,6 +89,7 @@ public class CursoServiceImplement implements CursoService {
         return ResponseUtils.createdResponse(newCursoDTO);
     }
     //Metodo para modificar un curso, tiene en cuenta mismas consideraciones que el metodo de crear
+    @Transactional
     @Override
     public ResponseEntity<?> updateCurso(Long id, CursoRequest cursoRequest,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -129,6 +131,7 @@ public class CursoServiceImplement implements CursoService {
 
     // Borrado logico del curso, solo se desactiva. Para eliminar un curso del repositorio podriamos hacer un .delete()
     // pero previo deberiamos ver la relacion que tiene con los profesores y alumnos
+
     @Override
     public ResponseEntity<?> deleteCurso(Long id,Authentication authentication) {
         Boolean isAdminActive = isAdmin(authentication);
@@ -145,12 +148,9 @@ public class CursoServiceImplement implements CursoService {
         return ResponseUtils.activeDesactiveResponse(!curso.getDeleted());
     }
     //Metodo para setear un alumno en un curso. BUsca por id al alumno y al curso y lo setea.
+    @Transactional
     @Override
     public ResponseEntity<?> setCursoAlumno(CursoAlumnoRequest request, Authentication authentication) {
-//        Boolean isAdminActive = isAdmin(authentication);
-//        if (!isAdminActive){
-//            return ResponseUtils.forbiddenResponse();
-//        }
         Curso curso = cursoRepository.findById(request.getIdCurso()).orElse(null);
         if(curso == null){
             return ResponseUtils.badRequestResponse("No se encontró el curso");

@@ -1,7 +1,6 @@
 package QuintoImpacto.testtecnico.dtos.combinacion;
 
 import QuintoImpacto.testtecnico.dtos.AlumnoDTO;
-import QuintoImpacto.testtecnico.models.Turno;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

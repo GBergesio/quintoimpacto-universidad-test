@@ -36,4 +36,7 @@ public class UserUtils {
             throw new RuntimeException(MessageRepository.getErrorNoUser());
         }
     }
+
+
+
 }
